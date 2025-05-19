@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>스탬프북</title>
+    <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f4f4f4;
+          padding: 40px;
+          text-align: center;
+        }
+
+        .stamp-container {
+          display: grid;
+          grid-template-columns: repeat(5, 60px);
+          gap: 15px;
+          justify-content: center;
+          margin-top: 20px;
+        }
+
+        .stamp {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background-color: #ddd;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 16px;
+          transition: background-color 0.3s;
+        }
+
+        .stamp.filled {
+          background-color: #ff6b6b;
+          color: white;
+        }
+
+        h1 {
+          margin-bottom: 10px;
+        }
+
+        .count-info {
+          margin-top: 10px;
+          font-size: 18px;
+          color: #333;
+        }
+    </style>
+</head>
+<body>
+<h1>쿠폰북 스탬프</h1>
+<div class="count-info">6 / 10 개 스탬프 적립됨</div>
+<div class="stamp-container">
+    <div class="stamp filled">1</div>
+    <div class="stamp filled">2</div>
+    <div class="stamp filled">3</div>
+    <div class="stamp filled">4</div>
+    <div class="stamp filled">5</div>
+    <div class="stamp filled">6</div>
+    <div class="stamp">7</div>
+    <div class="stamp">8</div>
+    <div class="stamp">9</div>
+    <div class="stamp">10</div>
+</div>
+</body>
+</html>
