@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>스탬프적립</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .count-info {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .stamp-container {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .stamp {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .phone-display {
+            font-size: 24px;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            border-bottom: 2px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dial-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .dial-btn {
+            background-color: #fff;
+            border: 1px solid #999;
+            border-radius: 10px;
+            font-size: 20px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .dial-btn:hover {
+            background-color: #ff6b6b;
+
+        }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        .submit-btn, .clear-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<form id="stampForm" onsubmit="handleFormSubmit()">
+    <div class="phone-display" id="phoneDisplay" th:text="'적립할 번호를 입력해주세요: ' + ${phoneNumber}">적립할 번호를 입력해주세요: </div>
+
+    <div class="dial-pad">
+        <button class="dial-btn" type="button" onclick="addDigit('1')">1</button>
+        <button class="dial-btn" type="button" onclick="addDigit('2')">2</button>
+        <button class="dial-btn" type="button" onclick="addDigit('3')">3</button>
+        <button class="dial-btn" type="button" onclick="addDigit('4')">4</button>
+        <button class="dial-btn" type="button" onclick="addDigit('5')">5</button>
+        <button class="dial-btn" type="button" onclick="addDigit('6')">6</button>
+        <button class="dial-btn" type="button" onclick="addDigit('7')">7</button>
+        <button class="dial-btn" type="button" onclick="addDigit('8')">8</button>
+        <button class="dial-btn" type="button" onclick="addDigit('9')">9</button>
+        <button class="dial-btn" type="button" onclick="removeLast()">←</button>
+        <button class="dial-btn" type="button" onclick="addDigit('0')">0</button>
+        <button class="dial-btn" type="button" onclick="clearInput()">C</button>
+    </div>
+
+    <div class="actions">
+        <button class="submit-btn" type="submit">적립</button>
+    </div>
+</form>
+
+<script>
+    let phoneInput = "";
+
+    function updateDisplay() {
+        document.getElementById('phoneDisplay').textContent = '적립할 번호를 입력해주세요: ' + phoneInput;
+    }
+
+    function addDigit(digit) {
+        if (phoneInput.length < 11) {
+            phoneInput += digit;
+            updateDisplay();
+        }
+    }
+
+    function removeLast() {
+        phoneInput = phoneInput.slice(0, -1);
+        updateDisplay();
+    }
+
+    function clearInput() {
+        phoneInput = "";
+        updateDisplay();
+    }
+
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        if (phoneInput.length < 10) {
+            alert("전화번호가 너무 짧습니다.");
+            return;
+        }
+        const paymentAmount = 10000; // 예시 금액
+        fetch('/stamp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                customerPhone: phoneInput,
+                paymentAmount: paymentAmount
+            })
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('서버 오류');
+                return response.text();
+            })
+            .then(data => {
+                alert('스탬프 적립 완료!');
+                window.location.reload();
+            })
+            .catch(error => {
+                alert('실패: ' + error.message);
+            });
+    }
+
+    updateDisplay();
+</script>
+
+</body>
+</html>

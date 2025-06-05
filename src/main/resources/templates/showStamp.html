@@ -2,54 +2,99 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>스탬프북</title>
     <style>
         body {
-          font-family: 'Arial', sans-serif;
-          background-color: #f4f4f4;
-          padding: 40px;
-          text-align: center;
-        }
-
-        .stamp-container {
-          display: grid;
-          grid-template-columns: repeat(5, 60px);
-          gap: 15px;
-          justify-content: center;
-          margin-top: 20px;
-        }
-
-        .stamp {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          background-color: #ddd;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 16px;
-          transition: background-color 0.3s;
-        }
-
-        .stamp.filled {
-          background-color: #ff6b6b;
-          color: white;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            padding: 40px;
+            text-align: center;
         }
 
         h1 {
-          margin-bottom: 10px;
+            margin-bottom: 10px;
         }
 
         .count-info {
-          margin-top: 10px;
-          font-size: 18px;
-          color: #333;
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .stamp-container {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .stamp {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .stamp.filled {
+            background-color: #ff6b6b;
+            color: white;
+        }
+
+        .phone-display {
+            font-size: 24px;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            border-bottom: 2px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dial-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .dial-btn {
+            background-color: #fff;
+            border: 1px solid #999;
+            border-radius: 10px;
+            font-size: 20px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .dial-btn:hover {
+            background-color: #eee;
+        }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        .submit-btn, .clear-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+
 <h1>쿠폰북 스탬프</h1>
 <div class="count-info">6 / 10 개 스탬프 적립됨</div>
 <div class="stamp-container">

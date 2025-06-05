@@ -13,12 +13,4 @@ public class FunctionController {
 
         return "showStamp";
     }
-
-    @PostMapping("/")
-    public String StampAccumulate() {
-        //스탬프 누적
-
-        return "";
-    }
-
 }
