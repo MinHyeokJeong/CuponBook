@@ -109,7 +109,8 @@
     </div>
 
     <div class="actions">
-        <button class="submit-btn" type="submit">적립</button>
+        <button class="submit-btn" type="button" onclick="handleStampSubmit()">적립</button>
+        <button class="submit-btn" type="button" onclick="handleViewSubmit()">조회</button>
     </div>
 </form>
 
@@ -136,14 +137,14 @@
         phoneInput = "";
         updateDisplay();
     }
-
-    function handleFormSubmit(event) {
-        event.preventDefault();
+    function handleStampSubmit() {
         if (phoneInput.length < 10) {
             alert("전화번호가 너무 짧습니다.");
             return;
         }
-        const paymentAmount = 10000; // 예시 금액
+
+        const paymentAmount = 10000;
+
         fetch('/stamp', {
             method: 'POST',
             headers: {
@@ -165,6 +166,27 @@
             .catch(error => {
                 alert('실패: ' + error.message);
             });
+    }
+
+    function handleViewSubmit() {
+        if (phoneInput.length < 10) {
+            alert("전화번호가 너무 짧습니다.");
+            return;
+        }
+
+        fetch(`/showStamp`, {
+            // method: 'GET'
+        })
+            // .then(response => {
+            //     if (!response.ok) throw new Error('조회 실패');
+            //     return response.html;
+            // })
+            // .then(data => {
+            //     alert(`현재 적립된 스탬프: ${data.stampCnt}개\n쿠폰: ${data.couponCnt}개`);
+            // })
+            // .catch(error => {
+            //     alert('조회 오류: ' + error.message);
+            // });
     }
 
     updateDisplay();
