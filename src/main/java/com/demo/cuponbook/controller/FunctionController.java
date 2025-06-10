@@ -15,27 +15,7 @@ import java.util.Map;
 
 @Controller
 public class FunctionController {
-
-  /*  private final StampConfirmService stampConfirmService;
-
-    public FunctionController(StampConfirmService stampConfirmService) {
-        this.stampConfirmService = stampConfirmService;
-    }
-
-    @ResponseBody
-    @GetMapping("/showStamp")
-    public Map<String, Object> showStamp(@RequestParam String phone) {
-        Customer customer = stampConfirmService.findCustomerByPhone(phone);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("stampCnt", customer.getStampCnt());
-        response.put("couponCnt", customer.getCouponCnt());
-
-        return response;
-    }*/
-
-
-    private final StampConfirmService stampConfirmService;
+        private final StampConfirmService stampConfirmService;
 
     public FunctionController(StampConfirmService stampConfirmService) {
         this.stampConfirmService = stampConfirmService;
