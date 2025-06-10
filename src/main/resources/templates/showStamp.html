@@ -96,13 +96,56 @@
 <body>
 
 <h1>쿠폰북 스탬프</h1>
-<div class="count-info" th:text="${stampCount} + ' / ' + ${totalStamp} + ' 개 스탬프 적립됨'"></div>
+<div class="count-info" th:text="${stampCount} + ' / ' + ${totalStamp} + ' 개 스탬프 적립됨' + '(사용 가능한 쿠폰 수 : ' + ${useableCupon} + ')'"></div>
 
 <div class="stamp-container">
     <div th:each="i : ${#numbers.sequence(1, totalStamp)}"
          th:classappend="${i <= stampCount} ? 'stamp filled' : 'stamp'"
          th:text="${i}"></div>
 </div>
+
+<div class="actions">
+    <button class="submit-btn" type="button" onclick="usedCoupon('${useableCupon}')">쿠폰사용</button>
+    <button class="submit-btn" type="button" onclick="payment()">결제하기</button>
+</div>
+
+<script>
+    function usedCoupon(useableCupon) {
+        if (useableCupon < 2) {
+            alert("쿠폰이 없습니다.");
+            return;
+        }
+
+        fetch('/showStamp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                usedCouponCnt : useableCupon++,
+                couponCnt : useableCupon--
+            })
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('서버 오류');
+                return response.text();
+            })
+            .then(data => {
+                alert('쿠폰 사용 완료!');
+                window.location.reload();
+            })
+            .catch(error => {
+                alert('실패: ' + error.message);
+            });
+    }
+
+    function payment() {
+        // 결제 페이지로 이동
+        //window.location.href = `/showStamp?phone=${phoneInput}`;
+    }
+
+
+</script>
 </body>
 </html>
 

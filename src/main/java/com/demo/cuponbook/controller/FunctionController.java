@@ -27,12 +27,13 @@ public class FunctionController {
 
         int stampCount = customer.getStampCnt();    // 적립된 스탬프 개수
         int totalStamp = 10;                          // 총 스탬프 개수 (고정 또는 DB에서 가져오기)
+        int usableCupon = customer.getCouponCnt(); // 사용가능한 쿠폰 갯수
 
         model.addAttribute("stampCount", stampCount);
         model.addAttribute("totalStamp", totalStamp);
+        model.addAttribute("useableCupon", usableCupon);
 
         return "showStamp";  // showStamp.html 뷰 반환
     }
-
 
 }
