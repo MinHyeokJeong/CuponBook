@@ -161,7 +161,8 @@
             })
             .then(data => {
                 alert('스탬프 적립 완료!');
-                window.location.reload();
+                window.location.href = `/payment?phone=${phoneInput}`;
+                //window.location.reload();
             })
             .catch(error => {
                 alert('실패: ' + error.message);

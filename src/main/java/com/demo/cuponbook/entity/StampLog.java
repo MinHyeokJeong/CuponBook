@@ -1,16 +1,15 @@
 package com.demo.cuponbook.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-
+//@Data -> @Getter/@Setter : 변경 사유는 Data를 쓸 경우 toString(), equals(), hashCode()까지 함께 자동 생성
+//hashCode 같은 메서드 호출 시 서로 참조하며 OverFlow 발생
 @Entity
 @Table(name = "STAMP_LOG")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -2,6 +2,7 @@ package com.demo.cuponbook.controller;
 
 import com.demo.cuponbook.dto.CouponUseRequest;
 import com.demo.cuponbook.entity.Customer;
+import com.demo.cuponbook.entity.StampLog;
 import com.demo.cuponbook.service.CustomerService;
 import com.demo.cuponbook.service.StampConfirmService;
 import org.apache.coyote.Response;
@@ -46,6 +47,19 @@ public class FunctionController {
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/payment")
+    public String costPayment(@RequestParam String phone, Model model) {
+        Customer customer = stampConfirmService.findCustomerByPhone(phone);
+        StampLog stampLog = stampConfirmService.findByAllCustomer(customer);
+
+        model.addAttribute("customer", customer);
+        model.addAttribute("stampCnt", customer.getStampCnt());
+        model.addAttribute("couponCnt", customer.getCouponCnt());
+        model.addAttribute("paymentAmount", stampLog.getPaymentAmount());
+
+        return "payment";
     }
 
 }
