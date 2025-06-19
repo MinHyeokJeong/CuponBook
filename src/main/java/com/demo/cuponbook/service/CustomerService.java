@@ -25,7 +25,7 @@ public class CustomerService {
         String phone = dto.getCustomerPhone();
         int amount = dto.getPaymentAmount();
 
-        //
+        // 해당번호를 검색 후 없으면 신규회원 생성
         Customer customer = customerRepository.findByCustomerPhone(phone)
                 .orElseGet(() -> {
                     Customer newCustomer = Customer.builder()
@@ -39,7 +39,7 @@ public class CustomerService {
                     return customerRepository.save(newCustomer);
                 });
 
-        // 적립될 스탬프 수 계산 (예: 만원 당 1개)
+        // 적립될 스탬프 수 계산 (현재 디폴트 만원/만원 당 하나 적립)
         int addStamp = amount / 10000;
         int totalStamp = customer.getStampCnt() + addStamp;
 
@@ -74,6 +74,7 @@ public class CustomerService {
             customer.setStampCnt(totalStamp);
             customer.setChgTm(LocalDateTime.now());
         }
+        // 회원 보유 스탬프 저장
         customerRepository.save(customer);
     }
 }
