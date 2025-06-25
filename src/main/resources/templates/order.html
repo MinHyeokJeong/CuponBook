@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 키오스크</title>
+    <style>
+        body {
+            font-family: 'Arial';
+            padding: 30px;
+            background: #f4f4f4;
+            text-align: center;
+        }
+        .menu-list{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2열 */
+            gap: 30px;
+            max-width: 700px;
+            margin: 0 auto 50px;
+        }
+        .menu-item {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .menu-item h3 {
+            margin: 0;
+        }
+        .quantity-control {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .quantity-control button {
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+        }
+        .total {
+            font-size: 24px;
+            margin-top: 30px;
+        }
+        .submit-btn {
+            margin-top: 20px;
+            padding: 10px 30px;
+            font-size: 18px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>주문하기</h1>
+<div class="menu-list">
+    <div class="menu-item">
+        <h3>아이스 아메리카노</h3>
+        <p>₩1500</p>
+        <div class="quantity-control">
+            <button type="button" onclick="updateQuantity('ice', -1)">-</button>
+            <span id="iceQty">0</span>
+            <button type="button" onclick="updateQuantity('ice', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="menu-item">
+        <h3>핫 아메리카노</h3>
+        <p>₩1000</p>
+        <div class="quantity-control">
+            <button type="button" onclick="updateQuantity('hot', -1)">-</button>
+            <span id="hotQty">0</span>
+            <button type="button" onclick="updateQuantity('hot', 1)">+</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="total">
+    총 합계: ₩<span id="totalPrice">0</span>
+</div>
+
+<form id="orderForm" method="post" th:action="@{/order}">
+    <input type="hidden" name="iceQty" id="inputIceQty" value="0"/>
+    <input type="hidden" name="hotQty" id="inputHotQty" value="0"/>
+    <input type="hidden" name="totalPrice" id="inputTotalPrice" value="0"/>
+    <button type="submit" class="submit-btn">주문하기</button>
+</form>
+
+<script>
+    let iceQty = 0;
+    let hotQty = 0;
+
+    function updateQuantity(type, change) {
+        if (type === 'ice') {
+            iceQty = Math.max(0, iceQty + change);
+            document.getElementById('iceQty').innerText = iceQty;
+        } else if (type === 'hot') {
+            hotQty = Math.max(0, hotQty + change);
+            document.getElementById('hotQty').innerText = hotQty;
+        }
+        updateTotal();
+    }
+
+    function updateTotal() {
+        const total = (iceQty * 1500) + (hotQty * 1000);
+        document.getElementById('totalPrice').innerText = total;
+        document.getElementById('inputIceQty').value = iceQty;
+        document.getElementById('inputHotQty').value = hotQty;
+        document.getElementById('inputTotalPrice').value = total;
+    }
+</script>
+
+</body>
+</html>

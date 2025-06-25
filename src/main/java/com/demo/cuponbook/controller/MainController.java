@@ -1,5 +1,6 @@
 package com.demo.cuponbook.controller;
 
+import com.demo.cuponbook.dto.OrderDTO;
 import com.demo.cuponbook.dto.StampSaveDTO;
 import com.demo.cuponbook.entity.Customer;
 import com.demo.cuponbook.service.CustomerService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -21,6 +23,19 @@ public class MainController {
     @GetMapping("/")
     public String indexPage() {
         return "stamp";
+    }
+    @GetMapping("/order")
+    public String orderPage() {
+        return "order";
+    }
+
+    @PostMapping("/order")
+    public String confirmOrder(@ModelAttribute OrderDTO orderDTO, Model model) {
+        System.out.println(orderDTO);
+        System.out.printf("총합계: " + orderDTO.getTotalPrice());
+
+        model.addAttribute("msg", "주문이 완료되었습니다!");
+        return "redirect:/payment?phone=01011111111";
     }
 
     @PostMapping("/stamp")
