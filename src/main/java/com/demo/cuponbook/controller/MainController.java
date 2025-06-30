@@ -8,10 +8,7 @@ import com.demo.cuponbook.service.StampConfirmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class MainController {
@@ -35,7 +32,7 @@ public class MainController {
         System.out.printf("총합계: " + orderDTO.getTotalPrice());
 
         model.addAttribute("msg", "주문이 완료되었습니다!");
-        return "redirect:/payment?phone=01011111111";
+        return "stamp";
     }
 
     @PostMapping("/stamp")
@@ -57,4 +54,13 @@ public class MainController {
         }
         return "redirect:/showStamp?phone=" + stampSaveDTO.getCustomerPhone();
     }
+
+    @GetMapping("/stamp")
+    public String saveCoupon(@ModelAttribute OrderDTO orderDTO, Model model) {
+        model.addAttribute("iceQty", orderDTO.getIceQty());
+        model.addAttribute("hotQty", orderDTO.getHotQty());
+        model.addAttribute("totalPrice", orderDTO.getTotalPrice());
+        return "stamp";
+    }
+
 }

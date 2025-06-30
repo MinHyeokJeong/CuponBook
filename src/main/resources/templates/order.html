@@ -87,7 +87,7 @@
     <input type="hidden" name="iceQty" id="inputIceQty" value="0"/>
     <input type="hidden" name="hotQty" id="inputHotQty" value="0"/>
     <input type="hidden" name="totalPrice" id="inputTotalPrice" value="0"/>
-    <button type="submit" class="submit-btn">주문하기</button>
+    <button type="button" class="submit-btn" onclick="submitOrder()">주문하기</button>
 </form>
 
 <script>
@@ -111,6 +111,13 @@
         document.getElementById('inputIceQty').value = iceQty;
         document.getElementById('inputHotQty').value = hotQty;
         document.getElementById('inputTotalPrice').value = total;
+    }
+    function submitOrder() {
+        const iceQty = parseInt(document.getElementById("inputIceQty").value);
+        const hotQty = parseInt(document.getElementById("inputHotQty").value);
+        const total = parseInt(document.getElementById("inputTotalPrice").value);
+
+        window.location.href = `/stamp?iceQty=${iceQty}&hotQty=${hotQty}&totalPrice=${total}`;
     }
 </script>
 

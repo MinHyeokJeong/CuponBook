@@ -91,6 +91,11 @@
         <strong style="font-size: 28px;font-weight: bold;">📱</strong>
         <span id="phoneDisplay" style="display: inline-block; font-weight: bold; font-size: 28px; color: #222; margin-top: 10px;"></span>
     </div>
+    <div>
+        <p>아이스 아메리카노 수량: <span th:text="${iceQty}">1</span></p>
+        <p>핫 아메리카노 수량: <span th:text="${hotQty}">1</span></p>
+        <p>총 합계: <span th:text="${totalPrice}">3000</span>원</p>
+    </div>
     <div class="dial-pad">
         <button class="dial-btn" type="button" onclick="addDigit('1')">1</button>
         <button class="dial-btn" type="button" onclick="addDigit('2')">2</button>
@@ -108,7 +113,7 @@
 
     <div class="actions">
         <button class="submit-btn" type="button" onclick="handleStampSubmit()">적립</button>
-        <button class="submit-btn" type="button" onclick="handleViewSubmit()">조회</button>
+        <button class="submit-btn" type="button" onclick="handleViewSubmit()">건너뛰기</button>
     </div>
 </form>
 
@@ -161,12 +166,13 @@
     }
 
     function handleViewSubmit() {
-        if (phoneInput.length < 10) {
-            alert("전화번호가 너무 짧습니다.");
-            return;
-        }
+        //if (phoneInput.length < 10) {
+        //    alert("전화번호가 너무 짧습니다.");
+        //    return;
+        //}
         // fetch 요청 대신에 조회 페이지로 이동
-        window.location.href = `/showStamp?phone=${phoneInput}`;
+        //window.location.href = `/showStamp?phone=${phoneInput}`;
+        window.location.href = `/order`;
     }
     updateDisplay();
 </script>
