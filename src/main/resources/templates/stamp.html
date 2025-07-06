@@ -85,16 +85,20 @@
     </style>
 </head>
 <body>
-<form id="stampForm" onsubmit="handleFormSubmit()">
+<form id="stampForm" method="post" action="/stamp">
     <div class="phone-display">
         <span>적립할 번호를 입력해주세요</span><br>
         <strong style="font-size: 28px;font-weight: bold;">📱</strong>
         <span id="phoneDisplay" style="display: inline-block; font-weight: bold; font-size: 28px; color: #222; margin-top: 10px;"></span>
     </div>
+    <input type="hidden" name="customerPhone" id="customerPhone" />
+    <input type="hidden" name = "iceQty" id="inputIceQty" value="1" th:value="${iceQty}" />
+    <input type="hidden" name= "hotQty" id="inputHotQty" value="1" th:value="${hotQty}" />
+    <input type="hidden" name= "totalPrice" id="inputTotalPrice" value="3000" th:value="${totalPrice}" />
     <div>
-        <p>아이스 아메리카노 수량: <span th:text="${iceQty}">1</span></p>
-        <p>핫 아메리카노 수량: <span th:text="${hotQty}">1</span></p>
-        <p>총 합계: <span th:text="${totalPrice}">3000</span>원</p>
+        <p>아이스 아메리카노 수량: <span id="displayIceQty" th:text="${iceQty}">1</span></p>
+        <p>핫 아메리카노 수량: <span id="displayHotQty" th:text="${hotQty}">1</span></p>
+        <p>총 합계: <span id="displayTotalPrice" th:text="${totalPrice}">3000</span>원</p>
     </div>
     <div class="dial-pad">
         <button class="dial-btn" type="button" onclick="addDigit('1')">1</button>
@@ -141,28 +145,9 @@
             alert("전화번호가 너무 짧습니다.");
             return;
         }
-        const paymentAmount = 10000;
-        fetch('/stamp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                customerPhone: phoneInput,
-                paymentAmount: paymentAmount
-            })
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('서버 오류');
-                return response.text();
-            })
-            .then(data => {
-                // 적립 성공 후 → 조회 페이지로 이동
-                window.location.href = `/showStamp?phone=${phoneInput}`;
-            })
-            .catch(error => {
-                alert('실패: ' + error.message);
-            });
+
+        document.getElementById('customerPhone').value = phoneInput;
+        document.getElementById('stampForm').submit(); // 폼 전송
     }
 
     function handleViewSubmit() {

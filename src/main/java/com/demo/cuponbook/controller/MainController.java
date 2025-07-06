@@ -36,9 +36,10 @@ public class MainController {
     }
 
     @PostMapping("/stamp")
-    public String index(@RequestBody StampSaveDTO stampSaveDTO, Model model) {
+    public String index(@ModelAttribute StampSaveDTO stampSaveDTO, @ModelAttribute OrderDTO orderDTO, Model model) {
         try {
-            customerService.collectStamp(stampSaveDTO);
+            //customerService.collectStamp(stampSaveDTO);
+            customerService.saveStamp(stampSaveDTO, orderDTO);
             Customer customer = stampConfirmService.findCustomerByPhone(stampSaveDTO.getCustomerPhone());
 
             int stampCount = customer.getStampCnt();
@@ -49,6 +50,7 @@ public class MainController {
             model.addAttribute("totalStamp", totalStamp);
             model.addAttribute("useableCoupon", useableCoupon);
             model.addAttribute("phone", stampSaveDTO.getCustomerPhone());
+
         }catch (Exception e) {
             e.printStackTrace();
         }

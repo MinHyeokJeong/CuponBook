@@ -1,5 +1,6 @@
 package com.demo.cuponbook.service;
 
+import com.demo.cuponbook.dto.OrderDTO;
 import com.demo.cuponbook.dto.StampSaveDTO;
 import com.demo.cuponbook.entity.Coupon;
 import com.demo.cuponbook.entity.Customer;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +77,73 @@ public class CustomerService {
             customer.setChgTm(LocalDateTime.now());
         }
         // 회원 보유 스탬프 저장
+        customerRepository.save(customer);
+    }
+
+    @Transactional
+    public void saveStamp(StampSaveDTO saveDto, OrderDTO orderDto) {
+        String phone = saveDto.getCustomerPhone();
+        int amount = orderDto.getTotalPrice();
+        int iceCnt = orderDto.getIceQty();
+        int hotCnt =  orderDto.getHotQty();
+
+        //적힙할 수
+        int saveStampCnt = (iceCnt + hotCnt) >= 10 ? (iceCnt+hotCnt)/10 : (iceCnt+hotCnt);
+        int saveCouponCnt = (iceCnt + hotCnt) >= 10 ? (iceCnt+hotCnt)%10 : 0;
+
+        Optional<Customer> optionalCustomer = customerRepository.findByCustomerPhone(phone);
+
+        Customer customer;
+
+        if (optionalCustomer.isPresent()) {
+            //회원이 존재하는 경우
+            customer = optionalCustomer.get();
+
+            // 적립될 스탬프 수
+            int totalStamp = customer.getStampCnt() + saveStampCnt;
+
+            // 스탬프 로그 저장
+            StampLog log = StampLog.builder()
+                    .customer(customer)
+                    .paymentAmount(amount)
+                    .stampCnt(saveStampCnt)
+                    .regDate(LocalDateTime.now())
+                    .build();
+            stampLogRepository.save(log);
+
+            // 쿠폰 처리
+            if (totalStamp >= 10) {
+                int newCouponCnt = totalStamp / 10;
+                int remainingStamps = totalStamp % 10;
+
+                customer.setCouponCnt(customer.getCouponCnt() + newCouponCnt);
+                customer.setStampCnt(remainingStamps);
+                customer.setChgTm(LocalDateTime.now());
+
+                for (int i = 0; i < newCouponCnt; i++) {
+                    Coupon coupon = Coupon.builder()
+                            .customer(customer)
+                            .createCouponDate(LocalDateTime.now())
+                            .isUsed(false)
+                            .build();
+                    couponRepository.save(coupon);
+                }
+
+            } else {
+                customer.setStampCnt(totalStamp);
+                customer.setChgTm(LocalDateTime.now());
+            }
+        } else {
+            //회원이 존재하지 않는 경우
+            customer = Customer.builder()
+                    .customerPhone(phone)
+                    .stampCnt(saveStampCnt)
+                    .couponCnt(saveCouponCnt)
+                    .usedCouponCnt(0)
+                    .crtTm(LocalDateTime.now())
+                    .chgTm(LocalDateTime.now())
+                    .build();
+        }
         customerRepository.save(customer);
     }
 }

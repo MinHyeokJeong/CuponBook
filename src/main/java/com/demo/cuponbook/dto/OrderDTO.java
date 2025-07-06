@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class OrderDTO {
-    private int iceQty;
-    private int hotQty;
-    private int totalPrice;
+    private Integer iceQty;
+    private Integer hotQty;
+    private Integer totalPrice;
 }
