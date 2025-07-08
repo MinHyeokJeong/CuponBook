@@ -2,12 +2,8 @@ package com.demo.cuponbook.service;
 
 import com.demo.cuponbook.dto.OrderDTO;
 import com.demo.cuponbook.dto.StampSaveDTO;
-import com.demo.cuponbook.entity.Coupon;
-import com.demo.cuponbook.entity.Customer;
-import com.demo.cuponbook.entity.StampLog;
-import com.demo.cuponbook.repository.CouponRepository;
-import com.demo.cuponbook.repository.CustomerRepository;
-import com.demo.cuponbook.repository.StampLogRepository;
+import com.demo.cuponbook.entity.*;
+import com.demo.cuponbook.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +16,8 @@ import java.util.Optional;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final StampLogRepository stampLogRepository;
+    private final StampLogInfRepository stampLogInfRepository;
+    private final StampLogHisRepository stampLogHisRepository;
     private final CouponRepository couponRepository;
 
     @Transactional
@@ -110,6 +108,41 @@ public class CustomerService {
                     .regDate(LocalDateTime.now())
                     .build();
             stampLogRepository.save(log);
+
+            //INF Table 저장
+            //Customer 정보가 존재하는지 확인
+            Optional<StampLogInf> optionalStampLogInf = stampLogInfRepository.findByCustomer(customer);
+
+            //존재할 경우 업데이트
+            if (optionalStampLogInf.isPresent()) {
+                StampLogInf infLog = optionalStampLogInf.get();
+
+                infLog.setStampCnt(infLog.getStampCnt() + saveStampCnt);
+                infLog.setRegDate(LocalDateTime.now());
+
+                stampLogInfRepository.save(infLog);
+            }
+            else //존재하지 않을경우 생성
+            {
+                StampLogInf infLog = StampLogInf.builder()
+                        .customer(customer)
+                        .phoneNumber(customer.getCustomerPhone())
+                        .paymentAmount(amount)
+                        .stampCnt(saveStampCnt)
+                        .regDate(LocalDateTime.now())
+                        .build();
+            }
+
+            //HIS Table 저장
+            StampLogHis stampLogHis = StampLogHis.builder()
+                    .customer(customer)
+                    .phoneNumber(customer.getCustomerPhone())
+                    .paymentAmount(amount)
+                    .stampCnt(saveStampCnt)
+                    .regDate(LocalDateTime.now())
+                    .build();
+
+            stampLogHisRepository.save(stampLogHis);
 
             // 쿠폰 처리
             if (totalStamp >= 10) {
