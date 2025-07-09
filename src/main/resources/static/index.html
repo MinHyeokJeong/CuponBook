@@ -3,196 +3,36 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>스탬프적립</title>
+    <title>주문하기</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            padding: 40px;
-            text-align: center;
-        }
-
-        h1 {
-            margin-bottom: 10px;
-        }
-
-        .count-info {
-            margin-top: 10px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .stamp-container {
-            display: grid;
-            grid-template-columns: repeat(5, 60px);
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .stamp {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #ddd;
             display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            height: 100vh;
+            margin: 0;
+            background: #f7f9fc;
+            font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
         }
 
-        .phone-display {
-            font-size: 24px;
-            letter-spacing: 2px;
-            margin: 20px 0;
-            border-bottom: 2px solid #ccc;
-            padding: 10px;
-            width: 200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .dial-pad {
-            display: grid;
-            grid-template-columns: repeat(3, 60px);
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .dial-btn {
-            background-color: #fff;
-            border: 1px solid #999;
-            border-radius: 10px;
+        button {
+            padding: 15px 30px;
             font-size: 20px;
-            padding: 15px;
+            background-color: rgba(255, 107, 107, 0.61);
+            color: white;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .dial-btn:hover {
-            background-color: #ff6b6b;
-
-        }
-
-        .actions {
-            margin-top: 15px;
-        }
-
-        .submit-btn, .clear-btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 5px;
-            cursor: pointer;
+        button:hover {
+            background-color: rgba(255, 107, 107, 0.61);
         }
     </style>
 </head>
-<body>
-<form id="stampForm" onsubmit="handleFormSubmit()">
-    <div class="phone-display" id="phoneDisplay" th:text="'적립할 번호를 입력해주세요: ' + ${phoneNumber}">적립할 번호를 입력해주세요: </div>
-
-    <div class="dial-pad">
-        <button class="dial-btn" type="button" onclick="addDigit('1')">1</button>
-        <button class="dial-btn" type="button" onclick="addDigit('2')">2</button>
-        <button class="dial-btn" type="button" onclick="addDigit('3')">3</button>
-        <button class="dial-btn" type="button" onclick="addDigit('4')">4</button>
-        <button class="dial-btn" type="button" onclick="addDigit('5')">5</button>
-        <button class="dial-btn" type="button" onclick="addDigit('6')">6</button>
-        <button class="dial-btn" type="button" onclick="addDigit('7')">7</button>
-        <button class="dial-btn" type="button" onclick="addDigit('8')">8</button>
-        <button class="dial-btn" type="button" onclick="addDigit('9')">9</button>
-        <button class="dial-btn" type="button" onclick="removeLast()">←</button>
-        <button class="dial-btn" type="button" onclick="addDigit('0')">0</button>
-        <button class="dial-btn" type="button" onclick="clearInput()">C</button>
-    </div>
-
-    <div class="actions">
-        <button class="submit-btn" type="button" onclick="handleStampSubmit()">적립</button>
-        <button class="submit-btn" type="button" onclick="handleViewSubmit()">조회</button>
-    </div>
-</form>
-
-<script>
-    let phoneInput = "";
-
-    function updateDisplay() {
-        document.getElementById('phoneDisplay').textContent = '적립할 번호를 입력해주세요: ' + phoneInput;
-    }
-
-    function addDigit(digit) {
-        if (phoneInput.length < 11) {
-            phoneInput += digit;
-            updateDisplay();
-        }
-    }
-
-    function removeLast() {
-        phoneInput = phoneInput.slice(0, -1);
-        updateDisplay();
-    }
-
-    function clearInput() {
-        phoneInput = "";
-        updateDisplay();
-    }
-    function handleStampSubmit() {
-        if (phoneInput.length < 10) {
-            alert("전화번호가 너무 짧습니다.");
-            return;
-        }
-
-        const paymentAmount = 10000;
-
-        fetch('/stamp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                customerPhone: phoneInput,
-                paymentAmount: paymentAmount
-            })
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('서버 오류');
-                return response.text();
-            })
-            .then(data => {
-                alert('스탬프 적립 완료!');
-                window.location.href = `/payment?phone=${phoneInput}`;
-                //window.location.reload();
-            })
-            .catch(error => {
-                alert('실패: ' + error.message);
-            });
-    }
-
-    function handleViewSubmit() {
-        if (phoneInput.length < 10) {
-            alert("전화번호가 너무 짧습니다.");
-            return;
-        }
-
-        // fetch 요청 대신에 조회 페이지로 이동
-        window.location.href = `/showStamp?phone=${phoneInput}`;
-
-        // fetch(`/showStamp?phone=${phoneInput}`)
-        //.then(response => {
-        //    if (!response.ok) throw new Error('조회 실패');
-        //    return response.json();
-        //})
-        //.then(data => {
-        //    alert(`현재 적립된 스탬프: ${data.stampCnt}개\n쿠폰: ${data.couponCnt}개`);
-        //})
-        //.catch(error => {
-        //    alert('조회 오류 : ' + error.message);
-        //});
-    }
-
-    updateDisplay();
-</script>
-
+<body onclick="location.href='/order'">
+    <button > 화면 클릭 시 주문창으로 이동합니다.</button>
 </body>
 </html>
