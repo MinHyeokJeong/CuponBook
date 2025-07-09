@@ -17,10 +17,6 @@ public class MainController {
     @Autowired
     StampConfirmService stampConfirmService;
 
-    @GetMapping("/")
-    public String indexPage() {
-        return "stamp";
-    }
     @GetMapping("/order")
     public String orderPage() {
         return "order";
