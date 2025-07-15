@@ -32,7 +32,12 @@ public class MainController {
     }
 
     @PostMapping("/stamp")
-    public String index(@ModelAttribute StampSaveDTO stampSaveDTO, @ModelAttribute OrderDTO orderDTO, Model model) {
+    public String index(@ModelAttribute StampSaveDTO stampSaveDTO,
+                        @ModelAttribute OrderDTO orderDTO,
+                        @RequestParam int iceQty,
+                        @RequestParam int hotQty,
+                        @RequestParam int totalPrice,
+                        Model model) {
         try {
             //customerService.collectStamp(stampSaveDTO);
             customerService.saveStamp(stampSaveDTO, orderDTO);
@@ -47,10 +52,17 @@ public class MainController {
             model.addAttribute("useableCoupon", useableCoupon);
             model.addAttribute("phone", stampSaveDTO.getCustomerPhone());
 
+            model.addAttribute("iceQty", iceQty);
+            model.addAttribute("hotQty", hotQty);
+            model.addAttribute("totalPrice", totalPrice);
+
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:/showStamp?phone=" + stampSaveDTO.getCustomerPhone();
+        return "redirect:/showStamp?phone=" + stampSaveDTO.getCustomerPhone()
+                + "&iceQty=" + iceQty
+                + "&hotQty=" + hotQty
+                + "&totalPrice=" + totalPrice;
     }
 
     @GetMapping("/stamp")

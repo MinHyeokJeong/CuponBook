@@ -97,6 +97,10 @@
 
 <h1>쿠폰북 스탬프</h1>
 <div class="count-info" th:text="${stampCount} + ' / ' + ${totalStamp} + ' 개 스탬프 적립됨' + '(사용 가능한 쿠폰 수 : ' + ${useableCoupon} + ')'"></div>
+<input type="hidden" name = "iceQty" id="inputIceQty" value="1" th:value="${iceQty}" />
+<input type="hidden" name= "hotQty" id="inputHotQty" value="1" th:value="${hotQty}" />
+<input type="hidden" name= "totalPrice" id="inputTotalPrice" value="3000" th:value="${totalPrice}" />
+<div class="order-info" th:text="'결제 금액 : ' + ${totalPrice} + '(아이스 아메리카노 : ' + ${iceQty} + ', 핫 아메리카노 : ' + ${hotQty} + ')'">쿠폰수량</div>
 
 <div class="stamp-container">
     <div th:each="i : ${#numbers.sequence(1, totalStamp)}"

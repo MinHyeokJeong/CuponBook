@@ -23,7 +23,11 @@ public class FunctionController {
     }
 
     @GetMapping("/showStamp")
-    public String showStamp(@RequestParam String phone, Model model) {
+    public String showStamp(@RequestParam String phone,
+                            @RequestParam int iceQty,
+                            @RequestParam int hotQty,
+                            @RequestParam int totalPrice,
+                            Model model) {
         Customer customer = stampConfirmService.findCustomerByPhone(phone);
 
         int stampCount = customer.getStampCnt();    // 적립된 스탬프 개수
@@ -35,6 +39,9 @@ public class FunctionController {
         model.addAttribute("useableCoupon", useableCoupon);
         model.addAttribute("phone", phone);
 
+        model.addAttribute("iceQty", iceQty);
+        model.addAttribute("hotQty", hotQty);
+        model.addAttribute("totalPrice", totalPrice);
         return "showStamp";  // showStamp.html 뷰 반환
     }
 
