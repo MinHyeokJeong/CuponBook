@@ -66,7 +66,7 @@
   <h2>결제 정보 확인</h2>
   <div class="payment-info" th:text="'적립 번호 : ' + ${customer.customerPhone}"></div>
   <div class="payment-info" th:text="'적립된 스탬프 수 : ' + ${stampCnt} + '/10개' + ', ' + '사용 가능한 쿠폰 : ' + ${couponCnt} + '개'"></div>
-  <div class="payment-info" th:text="'주문 수량 : ' + '1개, ' + '결제 금액 : ' + ${paymentAmount} + '원'"></div>
+  <div class="payment-info" th:text="'주문 수량 : ' + ${orderCnt} + ', ' + '결제 금액 : ' + ${paymentAmount} + '원'"></div>
 
   <button class="confirm-btn" onclick="alert('결제가 완료되었습니다!')">결제하기</button>
   <button class="confirm-btn back-btn" onclick="history.back()">뒤로가기</button>

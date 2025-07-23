@@ -3,6 +3,7 @@ package com.demo.cuponbook.controller;
 import com.demo.cuponbook.dto.CouponUseRequest;
 import com.demo.cuponbook.entity.Customer;
 import com.demo.cuponbook.entity.StampLog;
+import com.demo.cuponbook.entity.StampLogInf;
 import com.demo.cuponbook.service.CustomerService;
 import com.demo.cuponbook.service.StampConfirmService;
 import org.apache.coyote.Response;
@@ -59,12 +60,14 @@ public class FunctionController {
     @GetMapping("/payment")
     public String costPayment(@RequestParam String phone, Model model) {
         Customer customer = stampConfirmService.findCustomerByPhone(phone);
-        StampLog stampLog = stampConfirmService.findByAllCustomer(customer);
+        //StampLog stampLog = stampConfirmService.findByAllCustomer(customer);
+        StampLogInf stampLogInf = stampConfirmService.findByCustomerStamp(customer);
 
         model.addAttribute("customer", customer);
-        model.addAttribute("stampCnt", customer.getStampCnt());
+        model.addAttribute("stampCnt", customer.getStampCnt());//Custmoer에서 해도되고 stamp로 넘겨도되고
         model.addAttribute("couponCnt", customer.getCouponCnt());
-        model.addAttribute("paymentAmount", stampLog.getPaymentAmount());
+        model.addAttribute("orderCnt", stampLogInf.getStampCnt());
+        model.addAttribute("paymentAmount", stampLogInf.getPaymentAmount());
 
         return "payment";
     }

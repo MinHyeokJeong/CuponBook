@@ -3,20 +3,25 @@ package com.demo.cuponbook.service;
 
 import com.demo.cuponbook.entity.Customer;
 import com.demo.cuponbook.entity.StampLog;
+import com.demo.cuponbook.entity.StampLogInf;
 import com.demo.cuponbook.repository.CustomerRepository;
+import com.demo.cuponbook.repository.StampLogInfRepository;
 import com.demo.cuponbook.repository.StampLogRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StampConfirmService {
     private final CustomerRepository customerRepository;
     private final StampLogRepository stampLogRepository;
+    private final StampLogInfRepository stampLogInfRepository;
 
-    public StampConfirmService(CustomerRepository customerRepository, StampLogRepository stampLogRepository) {
+    public StampConfirmService(CustomerRepository customerRepository, StampLogRepository stampLogRepository, StampLogInfRepository stampLogInfRepository) {
         this.customerRepository = customerRepository;
         this.stampLogRepository = stampLogRepository;
+        this.stampLogInfRepository = stampLogInfRepository;
     }
 
     public Customer findCustomerByPhone(String phone) {
@@ -37,6 +42,16 @@ public class StampConfirmService {
 
         //log중 최근 데이터 하나만 가져오기
         return logs.getFirst();
+    }
+
+    //최근 사용자의 적립 내용 GET
+    public StampLogInf findByCustomerStamp(Customer customer) {
+        System.out.println("Customer : " + customer.getCustomerPhone());
+
+        Optional<StampLogInf> stampLogInf = stampLogInfRepository.findByCustomer(customer);
+
+        //없는 경우에는 null반환
+        return stampLogInf.orElse(null);
     }
 
     public Customer saveCustomer(Customer customer) {

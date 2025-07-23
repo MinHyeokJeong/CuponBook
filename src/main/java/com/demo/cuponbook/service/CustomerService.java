@@ -108,7 +108,9 @@ public class CustomerService {
         if (optionalStampLogInf.isPresent()) {
             StampLogInf infLog = optionalStampLogInf.get();
 
-            infLog.setStampCnt(infLog.getStampCnt() + saveStampCnt);
+            //infLog.setStampCnt(infLog.getStampCnt() + saveStampCnt);
+            infLog.setStampCnt(saveStampCnt); //현재 수량만
+            infLog.setPaymentAmount(amount);
             infLog.setRegDate(LocalDateTime.now());
 
             stampLogInfRepository.save(infLog);
