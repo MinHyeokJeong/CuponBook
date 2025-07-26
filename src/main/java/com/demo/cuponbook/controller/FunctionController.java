@@ -1,6 +1,7 @@
 package com.demo.cuponbook.controller;
 
 import com.demo.cuponbook.dto.CouponUseRequest;
+import com.demo.cuponbook.dto.OrderStampDTO;
 import com.demo.cuponbook.entity.Customer;
 import com.demo.cuponbook.entity.StampLog;
 import com.demo.cuponbook.service.CustomerService;
@@ -23,7 +24,11 @@ public class FunctionController {
     }
 
     @GetMapping("/showStamp")
-    public String showStamp(@RequestParam String phone, Model model) {
+    public String showStamp(@RequestParam(required = false) String phone,
+                            Model model,
+                            @RequestParam(required = false) Integer iceQty,
+                            @RequestParam(required = false) Integer hotQty,
+                            @RequestParam(required = false) Integer totalPrice) {
         Customer customer = stampConfirmService.findCustomerByPhone(phone);
 
         int stampCount = customer.getStampCnt();    // 적립된 스탬프 개수
@@ -34,7 +39,11 @@ public class FunctionController {
         model.addAttribute("totalStamp", totalStamp);
         model.addAttribute("useableCoupon", useableCoupon);
         model.addAttribute("phone", phone);
-
+        // 적립 예정인 제품 수량 및 결제 가격
+        model.addAttribute("iceQty", iceQty);
+        model.addAttribute("hotQty", hotQty);
+        model.addAttribute("totalPrice", totalPrice);
+        System.out.println(model);
         return "showStamp";  // showStamp.html 뷰 반환
     }
 

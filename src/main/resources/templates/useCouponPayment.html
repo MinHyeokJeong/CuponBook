@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>결제하기</title>
+  <style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .payment-box {
+        background-color: #fff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .payment-box h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .payment-info {
+        font-size: 18px;
+        color: #555;
+        margin: 10px 0;
+    }
+
+    .confirm-btn {
+        margin-top: 30px;
+        padding: 12px 24px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .confirm-btn:hover {
+        background-color: #218838;
+    }
+
+    .back-btn {
+        margin-top: 10px;
+        background-color: #6c757d;
+    }
+
+    .back-btn:hover {
+        background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+
+<div class="payment-box">
+  <h2>결제 정보 확인</h2>
+    <div class="payment-info" th:text="'적립 번호 : ' + ${customer.getCustomerPhone()}"></div>
+    <div class="payment-info" th:text="'차감 쿠폰 수: ' + ${useCouponCnt} + ' , 할인 금액 : ' + ${discountPrice} + '원'"></div>
+    <div class="payment-info"
+         th:text="'적립 예정 스탬프 수 : ' + (( ${iceQty} ?: 0) + (${hotQty} ?: 0) - (${useCouponCnt} ?: 0))"></div>
+
+    <div class="payment-info"
+         th:text="'주문 수량 : ' + ((${iceQty} ?: 0) + (${hotQty} ?: 0)) + ' 결제 금액 : ' + (${totalPrice} ?: 0) + '원'"></div>
+
+    <button class="confirm-btn" onclick="alert('결제가 완료되었습니다!')">결제하기</button>
+    <button class="confirm-btn back-btn" onclick="history.back()">뒤로가기</button>
+</div>
+
+</body>
+</html>

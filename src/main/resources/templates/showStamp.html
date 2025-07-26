@@ -16,7 +16,7 @@
             margin-bottom: 10px;
         }
 
-        .count-info {
+        .count-info order-info {
             margin-top: 10px;
             font-size: 18px;
             color: #333;
@@ -67,20 +67,6 @@
             margin: 20px 0;
         }
 
-        .dial-btn {
-            background-color: #fff;
-            border: 1px solid #999;
-            border-radius: 10px;
-            font-size: 20px;
-            padding: 15px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .dial-btn:hover {
-            background-color: #eee;
-        }
-
         .actions {
             margin-top: 15px;
         }
@@ -96,7 +82,8 @@
 <body>
 
 <h1>쿠폰북 스탬프</h1>
-<div class="count-info" th:text="${stampCount} + ' / ' + ${totalStamp} + ' 개 스탬프 적립됨' + '(사용 가능한 쿠폰 수 : ' + ${useableCoupon} + ')'"></div>
+<div class="count-info" th:text="'현재 적립 스탬프 : ' + ${stampCount} + ' / ' + ${totalStamp}  + ' (사용 가능한 쿠폰 수 : ' + ${useableCoupon} + ')'"></div>
+<div class="order-info" th:text="'결제 시 ' +(${iceQty} + ${hotQty}) + ' 개 스탬프 적립될 예정입니다. '"></div>
 
 <div class="stamp-container">
     <div th:each="i : ${#numbers.sequence(1, totalStamp)}"
@@ -105,54 +92,41 @@
 </div>
 
 <div class="actions">
-    <button id="coupon-btn" class="submit-btn" type="button" th:onclick="'usedCoupon(' + ${useableCoupon} + ')'">쿠폰사용</button>
-    <button class="submit-btn" type="button" onclick="payment()">결제하기</button>
+    <form id="couponForm" method="post" action="/useCoupon">
+        <input type="hidden" name="orderIceQty" th:value="${iceQty}" />
+        <input type="hidden" name="orderHotQty" th:value="${hotQty}" />
+        <input type="hidden" name="orderTotalPrice" th:value="${totalPrice}" />
+
+        <input type="hidden" name="phone" th:value="${phone}" />
+        <input type="hidden" name="usedCouponCnt" value="1" />
+        <input type="hidden" name="couponCnt" th:value="${useableCoupon - 1}" />
+        <button id="coupon-btn" class="submit-btn" type="button" onclick="handleUseCoupon()">쿠폰사용</button>
+    </form>
+    <form id="directPayment" method="post" action="/directPayment">
+        <input type="hidden" name="orderIceQty" th:value="${iceQty}" />
+        <input type="hidden" name="orderHotQty" th:value="${hotQty}" />
+        <input type="hidden" name="orderTotalPrice" th:value="${totalPrice}" />
+        <input type="hidden" name="phone" th:value="${phone}" />
+        <button class="submit-btn" type="submit" >결제하기</button>
+    </form>
 </div>
 
 
 <script th:inline="javascript">
     const phone = /*[[${phone}]]*/ "";
+    const useableCoupon = /*[[${useableCoupon}]]*/ 0;
 
-    function usedCoupon(useableCoupon) {
-        alert('현재 사용 가능한 쿠폰 수 : ' + useableCoupon);
-
-        if (useableCoupon < 1) {
+    function handleUseCoupon() {
+        if (useableCoupon == 0) {
             alert("사용 가능한 쿠폰이 없습니다.");
-            window.location.href = `/`;
             return;
         }
-
-        fetch('/showStamp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                phone: phone,
-                usedCouponCnt: 1,
-                couponCnt: useableCoupon - 1
-            })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('서버 오류');
-            return response.text();
-        })
-        .then(data => {
-            alert('쿠폰 사용 완료!');
-            // 조회 페이지로 이동
-            window.location.href = `/`;
-
-            //현재화면 유지
-            //window.location.reload();
-        })
-        .catch(error => {
-            alert('실패: ' + error.message);
-        });
+        document.getElementById('couponForm').submit();
     }
 
     function payment() {
         // 결제 페이지로 이동
-        window.location.href = `/payment?phone=${phone}`;
+        window.location.href = `/useCouponPayment?phone=${phone}`;
     }
 </script>
 

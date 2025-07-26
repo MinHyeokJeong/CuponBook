@@ -1,14 +1,18 @@
 package com.demo.cuponbook.controller;
 
 import com.demo.cuponbook.dto.OrderDTO;
+import com.demo.cuponbook.dto.OrderStampDTO;
 import com.demo.cuponbook.dto.StampSaveDTO;
+import com.demo.cuponbook.dto.UseCouponDTO;
 import com.demo.cuponbook.entity.Customer;
+import com.demo.cuponbook.entity.StampLog;
 import com.demo.cuponbook.service.CustomerService;
 import com.demo.cuponbook.service.StampConfirmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MainController {
@@ -31,9 +35,12 @@ public class MainController {
         return "stamp";
     }
 
+
     @PostMapping("/stamp")
-    public String index(@ModelAttribute StampSaveDTO stampSaveDTO, @ModelAttribute OrderDTO orderDTO, Model model) {
+    public String index(@ModelAttribute StampSaveDTO stampSaveDTO,
+                        @ModelAttribute OrderDTO orderDTO, Model model) {
         try {
+            // 결제 확정 된 뒤에 적립 하기 , 처음 적립 시 pending으로
             //customerService.collectStamp(stampSaveDTO);
             customerService.saveStamp(stampSaveDTO, orderDTO);
             Customer customer = stampConfirmService.findCustomerByPhone(stampSaveDTO.getCustomerPhone());
@@ -50,7 +57,7 @@ public class MainController {
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:/showStamp?phone=" + stampSaveDTO.getCustomerPhone();
+        return "redirect:/showStamp";
     }
 
     @GetMapping("/stamp")
@@ -59,6 +66,102 @@ public class MainController {
         model.addAttribute("hotQty", orderDTO.getHotQty());
         model.addAttribute("totalPrice", orderDTO.getTotalPrice());
         return "stamp";
+    }
+
+
+    @PostMapping("/pending")
+    public String pendingStamp(@ModelAttribute OrderStampDTO orderStampDTO,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            redirectAttributes.addAttribute("phone", orderStampDTO.getCustomerPhone());
+            redirectAttributes.addAttribute("iceQty", orderStampDTO.getIceQty());
+            redirectAttributes.addAttribute("hotQty", orderStampDTO.getHotQty());
+            redirectAttributes.addAttribute("totalPrice", orderStampDTO.getTotalPrice());
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/stamp";
+        }
+        return "redirect:/showStamp?phone=" + orderStampDTO.getCustomerPhone();
+    }
+
+    @PostMapping("useCoupon")
+    public String useCoupon(@ModelAttribute UseCouponDTO useCouponDTO,
+                            RedirectAttributes redirectAttributes) {
+        stampConfirmService.useCoupon(useCouponDTO.getPhone());
+
+        // 쿠폰 차감 후 주문 상품 가격 차감하기
+        // 현재는 쿠폰 사용시 쿠폰 갯수 1개 차감
+        int iceQty = useCouponDTO.getOrderIceQty();
+        int hotQty = useCouponDTO.getOrderHotQty();
+        int totalPrice = useCouponDTO.getOrderTotalPrice();
+        int discountPrice = 0;
+        if (iceQty > 0) {
+            discountPrice =1500;
+            totalPrice -= discountPrice;
+        } else if (iceQty == 0 || hotQty > 0) {
+            discountPrice =1000;
+            totalPrice -= discountPrice;
+        }
+
+        // 쿠폰 차감된 항목은 적립 제외
+        redirectAttributes.addAttribute("discountPrice", discountPrice);
+        redirectAttributes.addAttribute("useCouponCnt", 1);
+        redirectAttributes.addAttribute("iceQty", iceQty);
+        redirectAttributes.addAttribute("hotQty", hotQty);
+        redirectAttributes.addAttribute("totalPrice", totalPrice);
+        redirectAttributes.addAttribute("phone", useCouponDTO.getPhone());
+        return "useCouponPayment";
+
+    }
+
+    @GetMapping("/useCouponPayment")
+    public String costPayment(@RequestParam String phone,  Model model,
+                              @RequestParam(required = false) Integer iceQty,
+                              @RequestParam(required = false) Integer hotQty,
+                              @RequestParam(required = false) Integer totalPrice,
+                              @RequestParam(required = false) Integer useCouponCnt,
+                              @RequestParam(required = false) Integer discountPrice) {
+
+        try {
+            Customer customer = stampConfirmService.findCustomerByPhone(phone);
+
+            model.addAttribute("discountPrice", discountPrice);
+            model.addAttribute("customer", customer);
+            model.addAttribute("stampCnt", customer.getStampCnt());
+            model.addAttribute("couponCnt", customer.getCouponCnt());
+            model.addAttribute("useCouponCnt", useCouponCnt);
+            model.addAttribute("iceQty", iceQty);
+            model.addAttribute("hotQty", hotQty);
+            model.addAttribute("totalPrice", totalPrice);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "useCouponPayment";
+    }
+    @PostMapping("directPayment")
+    public String directPayment(@ModelAttribute UseCouponDTO useCouponDTO,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            String phone = useCouponDTO.getPhone();
+            Customer customer = stampConfirmService.findCustomerByPhone(phone);
+
+            redirectAttributes.addAttribute("phone", phone);
+
+            redirectAttributes.addAttribute("discountPrice", 0);
+            redirectAttributes.addAttribute("customer", customer);
+            redirectAttributes.addAttribute("stampCnt", customer.getStampCnt());
+            redirectAttributes.addAttribute("couponCnt", customer.getCouponCnt());
+            redirectAttributes.addAttribute("useCouponCnt", null);
+            redirectAttributes.addAttribute("iceQty", useCouponDTO.getOrderIceQty());
+            redirectAttributes.addAttribute("hotQty", useCouponDTO.getOrderHotQty());
+            redirectAttributes.addAttribute("totalPrice", useCouponDTO.getOrderTotalPrice());
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "useCouponPayment";
+
     }
 
 }
