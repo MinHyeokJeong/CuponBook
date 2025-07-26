@@ -122,7 +122,10 @@
 
         if (useableCoupon < 1) {
             alert("사용 가능한 쿠폰이 없습니다.");
-            window.location.href = `/`;
+            //메인화면 이동
+            //window.location.href = `/`;
+            //현재화면 유지
+            window.location.reload();
             return;
         }
 
@@ -144,10 +147,10 @@
         .then(data => {
             alert('쿠폰 사용 완료!');
             // 조회 페이지로 이동
-            window.location.href = `/`;
+            //window.location.href = `/`;
 
             //현재화면 유지
-            //window.location.reload();
+            window.location.reload();
         })
         .catch(error => {
             alert('실패: ' + error.message);
@@ -156,7 +159,18 @@
 
     function payment() {
         // 결제 페이지로 이동
-        window.location.href = `/payment?phone=${phone}`;
+        //window.location.href = `/payment?phone=${phone}`;
+
+
+        //새로운 창 열기
+        // phone 값을 포함한 결제 URL 구성
+        const url = `/payment?phone=${phone}`;
+
+        // 팝업 창 옵션
+        const windowFeatures = 'width=600,height=800,top=100,left=100,resizable=yes,scrollbars=yes';
+
+        // 새 창 열기
+        window.open(url, 'paymentWindow', windowFeatures);
     }
 </script>
 
