@@ -51,6 +51,16 @@
             border-radius: 6px;
             cursor: pointer;
         }
+        #orderSummary {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 20px; /* 주문 내역과 총 합계 사이 간격 */
+            line-height: 1.6;
+        }
+
+        .total h2:last-child {
+            margin-top: 30px; /* 총 합계 위쪽 띄우기 */
+        }
     </style>
 </head>
 <body>
@@ -60,6 +70,14 @@
     <div class="menu-item">
         <h3>아이스 아메리카노</h3>
         <p>₩1500</p>
+        <div class="size-control">
+            <label for="iceSize">사이즈:</label>
+            <select id="iceSize">
+                <option value="tall">Tall</option>
+                <option value="grande">Grande</option>
+                <option value="venti">Venti</option>
+            </select>
+        </div>
         <div class="quantity-control">
             <button type="button" onclick="updateQuantity('ice', -1)">-</button>
             <span id="iceQty">0</span>
@@ -70,6 +88,20 @@
     <div class="menu-item">
         <h3>핫 아메리카노</h3>
         <p>₩1000</p>
+        <div class="size-control">
+            <label>
+                <input type="radio" name="hotSize" value="tall" checked>
+                Tall
+            </label>
+            <label>
+                <input type="radio" name="hotSize" value="grande">
+                Grande
+            </label>
+            <label>
+                <input type="radio" name="hotSize" value="venti">
+                Venti
+            </label>
+        </div>
         <div class="quantity-control">
             <button type="button" onclick="updateQuantity('hot', -1)">-</button>
             <span id="hotQty">0</span>
@@ -78,8 +110,10 @@
     </div>
 </div>
 
-
 <div class="total">
+    주문 내역
+    <div id="orderSummary"></div> <!-- 주문 내역이 표시될 영역 -->
+
     총 합계: ₩<span id="totalPrice">0</span>
 </div>
 
@@ -102,16 +136,48 @@
             hotQty = Math.max(0, hotQty + change);
             document.getElementById('hotQty').innerText = hotQty;
         }
-        updateTotal();
+
+        const iceSize = document.getElementById('iceSize').value;
+        const hotSize = document.querySelector('input[name="hotSize"]:checked').value;
+
+        updateTotal(iceSize, hotSize);
     }
 
-    function updateTotal() {
-        const total = (iceQty * 1500) + (hotQty * 1000);
+    function updateTotal(iceSize, hotSize) {
+
+        const icePrice = updatePrice(iceSize, 1500);
+        const hotPrice = updatePrice(hotSize, 1000);
+
+        const total = (iceQty * icePrice) + (hotQty * hotPrice);
         document.getElementById('totalPrice').innerText = total;
         document.getElementById('inputIceQty').value = iceQty;
         document.getElementById('inputHotQty').value = hotQty;
         document.getElementById('inputTotalPrice').value = total;
+
+         // 주문 내역 표시
+        let summary = "";
+        if (iceQty > 0) {
+            summary += `아이스 아메리카노 (${iceSize}) x ${iceQty} → ₩${iceQty * icePrice}<br>`;
+        }
+        if (hotQty > 0) {
+            summary += `핫 아메리카노 (${hotSize}) x ${hotQty} → ₩${hotQty * hotPrice}<br>`;
+        }
+        if (summary === "") {
+            summary = "선택된 메뉴가 없습니다.";
+        }
+
+        document.getElementById("orderSummary").innerHTML = summary;
     }
+
+    function updatePrice(size, basePrice){
+        let sizeExtra = 0;
+
+        if(size == "grande") sizeExtra = 500;
+        else if(size == "venti") sizeExtra = 1000;
+
+        return basePrice + sizeExtra
+    }
+
     function submitOrder() {
         const iceQty = parseInt(document.getElementById("inputIceQty").value);
         const hotQty = parseInt(document.getElementById("inputHotQty").value);
