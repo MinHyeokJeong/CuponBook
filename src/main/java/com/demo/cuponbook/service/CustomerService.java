@@ -49,16 +49,11 @@ public class CustomerService {
         //회원이 존재하는경우
         customer = optionalCustomer.get();
 
-        // 적립될 스탬프 수
-        int saveStampCnt = (iceCnt + hotCnt) >= 10 ? (iceCnt+hotCnt)/10 : (iceCnt+hotCnt);
-        int saveCouponCnt = (iceCnt + hotCnt) >= 10 ? (iceCnt+hotCnt)%10 : 0;
-        int totalStamp = customer.getStampCnt() + saveStampCnt;
+        int orderTotalQty = iceCnt + hotCnt;
+        SaveStampLog(customer,amount,orderTotalQty);
 
-        //StampLog/Inf/His DB Write
-        SaveStampLog(customer,amount,saveStampCnt);
-
-        //CouponLogSave And customer Setting
-        customer = SaveCouponLog(customer, totalStamp);
+        int getStampQty = customer.getStampCnt();
+        customer = SaveCouponLog(customer, (getStampQty + orderTotalQty));
 
         customerRepository.save(customer);
     }
