@@ -51,10 +51,8 @@ public class FunctionController {
     @ResponseBody
     public ResponseEntity<String> handleCouponUse(@RequestBody CouponUseRequest request) {
         try {
-            stampConfirmService.useCoupon(request.getPhone());
+            stampConfirmService.useCoupon(request.getPhone(), request.getUsedCouponCnt());
             couponEvent = true;
-
-            System.out.println("couponEvent = " + couponEvent);
 
             return ResponseEntity.ok("쿠폰 사용 완료");
         } catch (IllegalStateException e) {

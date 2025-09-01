@@ -58,7 +58,7 @@ public class StampConfirmService {
         return customerRepository.save(customer);
     }
 
-    public void useCoupon(String phone) {
+    public void useCoupon(String phone, int usedCouponCnt) {
         Customer customer = findCustomerByPhone(phone);
 
         if (customer.getCouponCnt() < 1) {
@@ -66,7 +66,7 @@ public class StampConfirmService {
         }
 
         //쿠폰 차감
-        customer.setCouponCnt(customer.getCouponCnt() - 1);
+        customer.setCouponCnt(customer.getCouponCnt() - usedCouponCnt);
         //DB 저장
         saveCustomer(customer);
     }

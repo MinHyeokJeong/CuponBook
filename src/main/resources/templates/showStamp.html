@@ -117,43 +117,95 @@
 <script th:inline="javascript">
     const phone = /*[[${phone}]]*/ "";
 
-    function usedCoupon(useableCoupon) {
-        alert('현재 사용 가능한 쿠폰 수 : ' + useableCoupon);
+   async function usedCoupon(useableCoupon) {
+    if (useableCoupon < 1) {
+        alert("사용 가능한 쿠폰이 없습니다.");
+        window.location.reload();
+        return;
+    }
 
-        if (useableCoupon < 1) {
-            alert("사용 가능한 쿠폰이 없습니다.");
-            //메인화면 이동
-            //window.location.href = `/`;
-            //현재화면 유지
-            window.location.reload();
-            return;
+    let couponCount = await promptCouponSelection(useableCoupon);
+    if (couponCount === null) return; // 취소 시 종료
+
+    fetch('/showStamp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            phone: phone,
+            usedCouponCnt: couponCount,
+            couponCnt: useableCoupon - couponCount
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('서버 오류');
+        return response.text();
+    })
+    .then(data => {
+        alert(couponCount + '개 쿠폰 사용 완료!');
+        window.location.reload();
+    })
+    .catch(error => {
+        alert('실패: ' + error.message);
+    });
+    }
+
+    // 쿠폰 갯수 선택용 다이얼로그
+    function promptCouponSelection(maxCount) {
+        // 간단하게 select 박스로 UI 구성
+        let wrapper = document.createElement("div");
+        wrapper.style.position = "fixed";
+        wrapper.style.top = "0";
+        wrapper.style.left = "0";
+        wrapper.style.width = "100%";
+        wrapper.style.height = "100%";
+        wrapper.style.background = "rgba(0,0,0,0.5)";
+        wrapper.style.display = "flex";
+        wrapper.style.justifyContent = "center";
+        wrapper.style.alignItems = "center";
+        wrapper.style.zIndex = "9999";
+
+        let box = document.createElement("div");
+        box.style.background = "#fff";
+        box.style.padding = "20px";
+        box.style.borderRadius = "8px";
+        box.style.textAlign = "center";
+
+        let label = document.createElement("p");
+        label.innerText = "사용할 쿠폰 개수를 선택하세요 (최대 " + maxCount + "개)";
+        box.appendChild(label);
+
+        let select = document.createElement("select");
+        for (let i = 1; i <= maxCount; i++) {
+            let option = document.createElement("option");
+            option.value = i;
+            option.text = i + "개";
+            select.appendChild(option);
         }
+        box.appendChild(select);
 
-        fetch('/showStamp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                phone: phone,
-                usedCouponCnt: 1,
-                couponCnt: useableCoupon - 1
-            })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('서버 오류');
-            return response.text();
-        })
-        .then(data => {
-            alert('쿠폰 사용 완료!');
-            // 조회 페이지로 이동
-            //window.location.href = `/`;
+        let btnConfirm = document.createElement("button");
+        btnConfirm.innerText = "확인";
+        btnConfirm.style.margin = "10px";
+        let btnCancel = document.createElement("button");
+        btnCancel.innerText = "취소";
 
-            //현재화면 유지
-            window.location.reload();
-        })
-        .catch(error => {
-            alert('실패: ' + error.message);
+        box.appendChild(btnConfirm);
+        box.appendChild(btnCancel);
+        wrapper.appendChild(box);
+        document.body.appendChild(wrapper);
+
+        return new Promise((resolve) => {
+            btnConfirm.onclick = () => {
+                let value = parseInt(select.value);
+                document.body.removeChild(wrapper);
+                resolve(value);
+            };
+            btnCancel.onclick = () => {
+                document.body.removeChild(wrapper);
+                resolve(null);
+            };
         });
     }
 
