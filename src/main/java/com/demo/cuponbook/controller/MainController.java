@@ -37,10 +37,13 @@ public class MainController {
                         @RequestParam int iceQty,
                         @RequestParam int hotQty,
                         @RequestParam int totalPrice,
+                        @RequestParam String actionType,
                         Model model) {
         try {
             //customerService.collectStamp(stampSaveDTO);
-            customerService.saveStamp(stampSaveDTO, orderDTO);
+            if("saveStamp".equals(actionType))
+                customerService.saveStamp(stampSaveDTO, orderDTO);
+
             Customer customer = stampConfirmService.findCustomerByPhone(stampSaveDTO.getCustomerPhone());
 
             int stampCount = customer.getStampCnt();

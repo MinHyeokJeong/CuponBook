@@ -18,6 +18,9 @@ public class FunctionController {
         this.stampConfirmService = stampConfirmService;
     }
 
+    //전역변수로 설정(임시)
+    private int lastUsedCouponCnt = 0;
+
     @GetMapping("/showStamp")
     public String showStamp(@RequestParam String phone,
                             @RequestParam int iceQty,
@@ -31,9 +34,16 @@ public class FunctionController {
         int useableCoupon = customer.getCouponCnt(); // 사용가능한 쿠폰 갯수
 
         if (couponEvent) {
-            stampCount = stampCount == 0 ? stampCount : stampCount - 1;
-            totalPrice = totalPrice - 1000;
-            iceQty = iceQty - 1;
+            totalPrice -= (1000 * lastUsedCouponCnt); // 예: 쿠폰당 1000원 할인
+            if (iceQty >= lastUsedCouponCnt) {
+                iceQty -= lastUsedCouponCnt;
+            } else {
+                hotQty -= (lastUsedCouponCnt - iceQty);
+                iceQty = 0;
+            }
+
+            couponEvent = false;
+            lastUsedCouponCnt = 0;
         }
 
         model.addAttribute("stampCount", stampCount);
@@ -53,6 +63,8 @@ public class FunctionController {
         try {
             stampConfirmService.useCoupon(request.getPhone(), request.getUsedCouponCnt());
             couponEvent = true;
+
+            lastUsedCouponCnt = request.getUsedCouponCnt();
 
             return ResponseEntity.ok("쿠폰 사용 완료");
         } catch (IllegalStateException e) {

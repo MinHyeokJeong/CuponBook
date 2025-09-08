@@ -67,6 +67,7 @@ public class StampConfirmService {
 
         //쿠폰 차감
         customer.setCouponCnt(customer.getCouponCnt() - usedCouponCnt);
+        customer.setStampCnt(customer.getStampCnt() - usedCouponCnt);
         //DB 저장
         saveCustomer(customer);
     }
