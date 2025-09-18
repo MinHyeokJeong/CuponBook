@@ -76,4 +76,44 @@ public class MainController {
         return "stamp";
     }
 
+    @GetMapping("/couponUse")
+    public String GetFindCoupon(@ModelAttribute OrderDTO orderDTO, Model model) {
+        model.addAttribute("iceQty", orderDTO.getIceQty());
+        model.addAttribute("hotQty", orderDTO.getHotQty());
+        model.addAttribute("totalPrice", orderDTO.getTotalPrice());
+        return "couponUse";
+    }
+
+    @PostMapping("/couponUse")
+    public String PostFindCoupon(@ModelAttribute StampSaveDTO stampSaveDTO,
+                             @RequestParam int iceQty,
+                             @RequestParam int hotQty,
+                             @RequestParam int totalPrice,
+                             Model model) {
+
+        try {
+            Customer customer = stampConfirmService.findCustomerByPhone(stampSaveDTO.getCustomerPhone());
+
+            int stampCount = customer.getStampCnt();
+            int totalStamp = 10;
+            int useableCoupon = customer.getCouponCnt();
+
+            model.addAttribute("stampCount", stampCount);
+            model.addAttribute("totalStamp", totalStamp);
+            model.addAttribute("useableCoupon", useableCoupon);
+            model.addAttribute("phone", stampSaveDTO.getCustomerPhone());
+
+            model.addAttribute("iceQty", iceQty);
+            model.addAttribute("hotQty", hotQty);
+            model.addAttribute("totalPrice", totalPrice);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/showStamp?phone=" + stampSaveDTO.getCustomerPhone()
+                + "&iceQty=" + iceQty
+                + "&hotQty=" + hotQty
+                + "&totalPrice=" + totalPrice;
+    }
+
 }

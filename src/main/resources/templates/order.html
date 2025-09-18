@@ -124,6 +124,7 @@
     <input type="hidden" name="totalCnt" id="inputTotalCnt" value="0"/>
     <input type="hidden" name="totalPrice" id="inputTotalPrice" value="0"/>
     <button type="button" class="submit-btn" onclick="submitOrder()">결제하기</button>
+    <button type="button" class="submit-btn" onclick="useCoupon()">쿠폰사용</button>
     <button type="button" class="submit-btn" onclick="pageBack()">뒤로가기</button>
 </form>
 
@@ -243,6 +244,15 @@
         // 예시: 메인 화면으로 이동
         window.location.href = `/`;
     }
+
+    function useCoupon(){
+        const iceQty = parseInt(document.getElementById("inputIceQty").value);
+        const hotQty = parseInt(document.getElementById("inputHotQty").value);
+        const total = parseInt(document.getElementById("inputTotalPrice").value);
+
+        window.location.href = `/couponUse?iceQty=${iceQty}&hotQty=${hotQty}&totalPrice=${total}`;
+    }
+
     function pageBack(){
         window.location.href = `/`;
     }

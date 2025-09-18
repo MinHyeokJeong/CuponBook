@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>스탬프적립</title>
+  <style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        padding: 40px;
+        text-align: center;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+    .phone-display {
+        font-size: 20px;
+        letter-spacing: 1px;
+        margin: 20px 0;
+        border: 2px solid #ff6b6b;
+        border-radius: 8px;
+        background-color: #e8caca;
+        padding: 20px;
+        width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .dial-pad {
+        display: grid;
+        grid-template-columns: repeat(3, 60px);
+        gap: 10px;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .dial-btn {
+        background-color: #fff;
+        border: 1.5px solid #ff6b6b;
+        border-radius: 12px;
+        font-size: 22px;
+        padding: 16px 0;
+        cursor: pointer;
+        transition: background-color 0.2s, box-shadow 0.2s;
+        font-weight: bold;
+        color: #333;
+        box-shadow: 0 2px 4px rgba(255,153,0,0.06);
+    }
+
+    .dial-btn:hover {
+        background-color: #cb7070;
+        box-shadow: 0 4px 10px rgba(255,153,0,0.12);
+    }
+
+    /* Orange arrow styling for ← button */
+    .dial-btn:nth-child(10) {
+        color: #ff6b6b;
+        font-weight: bold;
+    }
+
+    .actions {
+        margin-top: 15px;
+    }
+
+    .submit-btn {
+        background-color: #ff6b6b;
+        border: none;
+        color: white;
+        font-weight: bold;
+        padding: 12px 24px;
+        font-size: 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin: 5px;
+    }
+
+    .submit-btn:hover {
+        background-color: #ff6b6b;
+    }
+  </style>
+</head>
+<body>
+<form id="stampForm" method="post" action="/couponUse">
+  <div class="phone-display">
+    <span>조회할 번호를 입력해주세요</span><br>
+    <strong style="font-size: 28px;font-weight: bold;">📱</strong>
+    <span id="phoneDisplay" style="display: inline-block; font-weight: bold; font-size: 28px; color: #222; margin-top: 10px;"></span>
+  </div>
+
+  <input type="hidden" name="customerPhone" id="customerPhone" />
+  <input type="hidden" name="iceQty" id="inputIceQty" th:value="${iceQty}" />
+  <input type="hidden" name="hotQty" id="inputHotQty" th:value="${hotQty}" />
+  <input type="hidden" name="totalPrice" id="inputTotalPrice" th:value="${totalPrice}" />
+  <input type="hidden" name="actionType" id="actionType" />
+
+  <div class="dial-pad">
+    <button class="dial-btn" type="button" onclick="addDigit('1')">1</button>
+    <button class="dial-btn" type="button" onclick="addDigit('2')">2</button>
+    <button class="dial-btn" type="button" onclick="addDigit('3')">3</button>
+    <button class="dial-btn" type="button" onclick="addDigit('4')">4</button>
+    <button class="dial-btn" type="button" onclick="addDigit('5')">5</button>
+    <button class="dial-btn" type="button" onclick="addDigit('6')">6</button>
+    <button class="dial-btn" type="button" onclick="addDigit('7')">7</button>
+    <button class="dial-btn" type="button" onclick="addDigit('8')">8</button>
+    <button class="dial-btn" type="button" onclick="addDigit('9')">9</button>
+    <button class="dial-btn" type="button" onclick="removeLast()">←</button>
+    <button class="dial-btn" type="button" onclick="addDigit('0')">0</button>
+    <button class="dial-btn" type="button" onclick="clearInput()">C</button>
+  </div>
+
+  <div class="actions">
+    <button class="submit-btn" type="button" onclick="submitAction('findStamp')">조회</button>
+    <button class="submit-btn" type="button" onclick="submitAction('useCoupon')">사용</button>
+    <!--<button class="submit-btn" type="button" onclick="submitAction('skip')">뒤로가기</button>-->
+  </div>
+</form>
+
+<script>
+  let phoneInput = "";
+
+  function updateDisplay() {
+      document.getElementById('phoneDisplay').textContent = phoneInput;
+  }
+  function addDigit(digit) {
+      if (phoneInput.length < 11) {
+          phoneInput += digit;
+          updateDisplay();
+      }
+  }
+  function removeLast() {
+      phoneInput = phoneInput.slice(0, -1);
+      updateDisplay();
+  }
+  function clearInput() {
+      phoneInput = "";
+      updateDisplay();
+  }
+
+  function submitAction(action) {
+      if (action !== 'skip' && phoneInput.length < 10) {
+          alert("전화번호가 너무 짧습니다.");
+          return;
+      }
+      document.getElementById('customerPhone').value = phoneInput;
+      document.getElementById('actionType').value = action;
+
+      if (action === 'skip') {
+          window.location.href = `/order`; // 건너뛰기 → 주문화면으로
+      } else {
+          document.getElementById('stampForm').submit(); // 적립/쿠폰사용 → 폼 전송
+      }
+  }
+
+  updateDisplay();
+</script>
+</body>
+</html>
