@@ -5,92 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>스탬프적립</title>
     <style>
+        :root{
+            --main:#ff6b6b; --bg:#fff7f7;  --card:#ffffff;
+            --text:#222;
+            --muted:#70757a;
+            --ring:rgba(255,107,107,.25);
+        }
+        *{box-sizing:border-box}
+
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            padding: 40px;
-            text-align: center;
+            margin:0;
+            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo";
+            background: radial-gradient(1200px 600px at 20% -10%, #ffe3e3 0%, transparent 60%),
+            radial-gradient(1200px 600px at 100% 0%, #fff0f0 0%, transparent 50%),
+            var(--bg);
+            min-height:100dvh;
+            padding: 40px 20px;
+            color:var(--text);
+            display:flex; align-items:center; justify-content:center;
         }
 
         h1 {
-            margin-bottom: 10px;
+            margin: 0 0 16px;
+            font-size: 26px;
+            letter-spacing:.2px;
         }
+
+        /* 카드 느낌으로 감싸기 */
+        form#stampForm{
+            width:100%;
+            max-width: 520px;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 24px 22px;
+            box-shadow: 0 10px 30px -12px rgba(0,0,0,.15);
+            border:1px solid #fff0f0;
+        }
+
+        /* 번호 디스플레이 */
         .phone-display {
             font-size: 20px;
             letter-spacing: 1px;
-            margin: 20px 0;
-            border: 2px solid #ff6b6b;
-            border-radius: 8px;
-            background-color: #e8caca;
-            padding: 20px;
-            width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin: 10px auto 18px;
+            border: 2px solid var(--main);
+            border-radius: 12px;
+            background: #fff3f3;
+            padding: 18px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 6px 20px -10px var(--ring) inset;
             text-align: center;
         }
+        .phone-display strong{
+            display:block;
+            margin-bottom:6px;
+            font-size:28px;
+        }
+        #phoneDisplay{
+            font-weight: 800;
+            font-size: 28px;
+            color: #111;
+            letter-spacing: .5px;
+            min-height: 34px;
+        }
 
+        /* 주문 요약 */
+        .summary{
+            display:grid; gap:6px; margin: 8px 0 16px;
+            color:var(--muted); font-size:14px;
+        }
+        .summary p{margin:0}
+        .summary b{color:#111}
+
+        /* 다이얼 패드 */
         .dial-pad {
             display: grid;
-            grid-template-columns: repeat(3, 60px);
-            gap: 10px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             justify-content: center;
-            margin: 20px 0;
+            margin: 16px auto 12px;
+            width:100%;
+            max-width: 360px;
         }
 
         .dial-btn {
-            background-color: #fff;
-            border: 1.5px solid #ff6b6b;
-            border-radius: 12px;
+            background: #fff;
+            border: 1.5px solid #ffd3d3;
+            border-radius: 14px;
             font-size: 22px;
             padding: 16px 0;
             cursor: pointer;
-            transition: background-color 0.2s, box-shadow 0.2s;
-            font-weight: bold;
+            transition: transform .05s ease, box-shadow .2s ease, background .15s ease, border-color .15s ease;
+            font-weight: 800;
             color: #333;
-            box-shadow: 0 2px 4px rgba(255,153,0,0.06);
+            box-shadow: 0 2px 8px rgba(255,107,107,0.12);
+            user-select:none;
         }
-
         .dial-btn:hover {
-            background-color: #cb7070;
-            box-shadow: 0 4px 10px rgba(255,153,0,0.12);
+            background: #fff0f0;
+            border-color: var(--main);
+            box-shadow: 0 6px 16px rgba(255,107,107,0.22);
+        }
+        .dial-btn:active{
+            transform: translateY(1px);
+        }
+        /* ←, 0, C 버튼 색 강조 살짝 */
+        .dial-btn:nth-child(10),
+        .dial-btn:nth-child(11),
+        .dial-btn:nth-child(12){
+            font-weight: 700;
+            color: var(--main);
+            border-color:#ffc2c2;
         }
 
-        /* Orange arrow styling for ← button */
-        .dial-btn:nth-child(10) {
-            color: #ff6b6b;
-            font-weight: bold;
-        }
-
+        /* 액션 버튼 */
         .actions {
-            margin-top: 15px;
+            margin-top: 18px;
+            display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
         }
 
         .submit-btn {
-            background-color: #ff6b6b;
+            background: var(--main);
             border: none;
             color: white;
-            font-weight: bold;
-            padding: 12px 24px;
-            font-size: 18px;
-            border-radius: 6px;
+            font-weight: 800;
+            padding: 12px 22px;
+            font-size: 16px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.3s;
-            margin: 5px;
+            transition: background-color .2s ease, box-shadow .2s ease, transform .05s ease;
+            box-shadow: 0 10px 24px -10px var(--ring);
+            letter-spacing:.2px;
         }
+        .submit-btn:hover { background-color: #ff5a5a; }
+        .submit-btn:active{ transform: translateY(1px); }
 
-        .submit-btn:hover {
-            background-color: #ff6b6b;
+        /* 반응형 */
+        @media (max-width:480px){
+            form#stampForm{padding:20px 16px}
+            .phone-display{padding:16px}
+            .dial-btn{font-size:20px; padding:14px 0}
         }
     </style>
 </head>
 <body>
 <form id="stampForm" method="post" action="/pending">
+    <h1>스탬프 적립</h1>
+
     <div class="phone-display">
-        <span>적립할 번호를 입력해주세요</span><br>
-        <strong style="font-size: 28px;font-weight: bold;">📱</strong>
-        <span id="phoneDisplay" style="display: inline-block; font-weight: bold; font-size: 28px; color: #222; margin-top: 10px;"></span>
+        <span>적립할 번호를 입력해주세요</span>
+        <strong>📱</strong>
+        <span id="phoneDisplay"></span>
     </div>
+
     <input type="hidden" name="customerPhone" id="customerPhone" />
     <input type="hidden" name = "iceQty" id="inputIceQty" value="1" th:value="${iceQty}" />
     <input type="hidden" name= "hotQty" id="inputHotQty" value="1" th:value="${hotQty}" />
@@ -100,6 +167,7 @@
         <p>핫 아메리카노 수량: <span id="displayHotQty" th:text="${hotQty}"></span></p>
         <p>총 합계: <span id="displayTotalPrice" th:text="${totalPrice}"></span>원</p>
     </div>
+
     <div class="dial-pad">
         <button class="dial-btn" type="button" onclick="addDigit('1')">1</button>
         <button class="dial-btn" type="button" onclick="addDigit('2')">2</button>
@@ -117,7 +185,7 @@
 
     <div class="actions">
         <button class="submit-btn" type="button" onclick="handleStampSubmit()">적립</button>
-        <button class="submit-btn" type="button" onclick="handleViewSubmit()">건너뛰기</button>
+        <button class="submit-btn" type="button" onclick="handleViewSubmit()" style="background:#ff8a8a">건너뛰기</button>
     </div>
 </form>
 
@@ -145,22 +213,14 @@
             alert("전화번호가 너무 짧습니다.");
             return;
         }
-
         document.getElementById('customerPhone').value = phoneInput;
-        document.getElementById('stampForm').submit(); // 폼 전송
+        document.getElementById('stampForm').submit();
     }
-
     function handleViewSubmit() {
-        //if (phoneInput.length < 10) {
-        //    alert("전화번호가 너무 짧습니다.");
-        //    return;
-        //}
-        // fetch 요청 대신에 조회 페이지로 이동
-        //window.location.href = `/showStamp?phone=${phoneInput}`;
+        // window.location.href = `/showStamp?phone=${phoneInput}`;
         window.location.href = `/order`;
     }
     updateDisplay();
 </script>
-
 </body>
 </html>

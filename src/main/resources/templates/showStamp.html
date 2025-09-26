@@ -77,21 +77,27 @@
             margin: 5px;
             cursor: pointer;
         }
+        .error {
+            background:#fff3cd; color:#856404; border:1px solid #ffeeba;
+            padding:12px 16px; border-radius:8px; display:inline-block; margin-top:12px;
+        }
     </style>
 </head>
 <body>
 
 <h1>쿠폰북 스탬프</h1>
-<div class="count-info" th:text="'현재 적립 스탬프 : ' + ${stampCount} + ' / ' + ${totalStamp}  + ' (사용 가능한 쿠폰 수 : ' + ${useableCoupon} + ')'"></div>
-<div class="order-info" th:text="'결제 시 ' +(${iceQty} + ${hotQty}) + ' 개 스탬프 적립될 예정입니다. '"></div>
-
-<div class="stamp-container">
-    <div th:each="i : ${#numbers.sequence(1, totalStamp)}"
-         th:classappend="${i <= stampCount} ? 'stamp filled' : 'stamp'"
-         th:text="${i}"></div>
+<div class="order-info"
+     th:text="'결제 시 ' + ((${iceQty}?:0) + (${hotQty}?:0)) + ' 개 스탬프 적립될 예정입니다.'">
 </div>
+<div th:if="${error}" class="error" th:text="${error}"></div>
+<div th:if="${error == null}">
+    <div class="count-info" th:text="'현재 적립 스탬프 : ' + ${stampCount} + ' / ' + ${totalStamp}  + ' (사용 가능한 쿠폰 수 : ' + ${useableCoupon} + ')'"></div>
 
-<div class="actions">
+    <div class="stamp-container">
+        <div th:each="i : ${#numbers.sequence(1, totalStamp)}"
+             th:classappend="${i <= stampCount} ? 'stamp filled' : 'stamp'"
+             th:text="${i}"></div>
+    </div>
     <form id="couponForm" method="post" action="/useCoupon">
         <input type="hidden" name="orderIceQty" th:value="${iceQty}" />
         <input type="hidden" name="orderHotQty" th:value="${hotQty}" />
@@ -102,6 +108,9 @@
         <input type="hidden" name="couponCnt" th:value="${useableCoupon - 1}" />
         <button id="coupon-btn" class="submit-btn" type="button" onclick="handleUseCoupon()">쿠폰사용</button>
     </form>
+
+</div>
+<div class="actions">
     <form id="directPayment" method="post" action="/directPayment">
         <input type="hidden" name="orderIceQty" th:value="${iceQty}" />
         <input type="hidden" name="orderHotQty" th:value="${hotQty}" />
@@ -110,7 +119,6 @@
         <button class="submit-btn" type="submit" >결제하기</button>
     </form>
 </div>
-
 
 <script th:inline="javascript">
     const phone = /*[[${phone}]]*/ "";

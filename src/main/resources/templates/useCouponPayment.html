@@ -63,18 +63,22 @@
 <body>
 
 <div class="payment-box">
-  <h2>결제 정보 확인</h2>
-    <div class="payment-info" th:text="'적립 번호 : ' + ${customer.getCustomerPhone()}"></div>
-    <div class="payment-info" th:text="'차감 쿠폰 수: ' + ${useCouponCnt} + ' , 할인 금액 : ' + ${discountPrice} + '원'"></div>
-    <div class="payment-info"
-         th:text="'적립 예정 스탬프 수 : ' + (( ${iceQty} ?: 0) + (${hotQty} ?: 0) - (${useCouponCnt} ?: 0))"></div>
+    <h2>결제 정보 확인</h2>
 
     <div class="payment-info"
-         th:text="'주문 수량 : ' + ((${iceQty} ?: 0) + (${hotQty} ?: 0)) + ' 결제 금액 : ' + (${totalPrice} ?: 0) + '원'"></div>
+         th:text="${'적립 번호 : ' + ((customer != null and customer.customerPhone != null) ? customer.customerPhone : (phone ?: ''))}">
+    </div>
+
+    <div class="payment-info"
+         th:text="${'차감 쿠폰 수: ' + (useCouponCnt ?: 0) + ' , 할인 금액 : ' + (discountPrice ?: 0) + '원'}">
+    </div>
+
+    <div class="payment-info"
+         th:text="${'주문 수량 : ' + ((iceQty?:0) + (hotQty?:0)) + ' , 결제 금액 : ' + (totalPrice?:0) + '원'}">
+    </div>
 
     <button class="confirm-btn" onclick="alert('결제가 완료되었습니다!')">결제하기</button>
     <button class="confirm-btn back-btn" onclick="history.back()">뒤로가기</button>
 </div>
-
 </body>
 </html>

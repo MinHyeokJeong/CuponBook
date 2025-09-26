@@ -7,6 +7,7 @@ import com.demo.cuponbook.repository.CustomerRepository;
 import com.demo.cuponbook.repository.StampLogRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,7 +22,7 @@ public class StampConfirmService {
 
     public Customer findCustomerByPhone(String phone) {
         return customerRepository.findByCustomerPhone(phone)
-                .orElseThrow(() -> new IllegalArgumentException("해당 전화번호의 고객이 없습니다."));
+                .orElse(null);
     }
 
     public StampLog findByAllCustomer(Customer customer) {

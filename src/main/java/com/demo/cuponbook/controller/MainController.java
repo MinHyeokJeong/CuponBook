@@ -82,7 +82,7 @@ public class MainController {
             e.printStackTrace();
             return "redirect:/stamp";
         }
-        return "redirect:/showStamp?phone=" + orderStampDTO.getCustomerPhone();
+        return "redirect:/showStamp";
     }
 
     @PostMapping("useCoupon")
@@ -127,41 +127,64 @@ public class MainController {
             Customer customer = stampConfirmService.findCustomerByPhone(phone);
 
             model.addAttribute("discountPrice", discountPrice);
-            model.addAttribute("customer", customer);
-            model.addAttribute("stampCnt", customer.getStampCnt());
-            model.addAttribute("couponCnt", customer.getCouponCnt());
             model.addAttribute("useCouponCnt", useCouponCnt);
             model.addAttribute("iceQty", iceQty);
             model.addAttribute("hotQty", hotQty);
             model.addAttribute("totalPrice", totalPrice);
+
+            if (customer == null) {
+                Customer newCustomer = new Customer();
+                model.addAttribute("customer", newCustomer);
+            }else{
+                model.addAttribute("customer", customer);
+                model.addAttribute("stampCnt", customer.getStampCnt());
+                model.addAttribute("couponCnt", customer.getCouponCnt());
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }
         return "useCouponPayment";
     }
-    @PostMapping("directPayment")
+    @PostMapping("/directPayment")
     public String directPayment(@ModelAttribute UseCouponDTO useCouponDTO,
-                            RedirectAttributes redirectAttributes) {
+                                Model model) {
         try {
             String phone = useCouponDTO.getPhone();
             Customer customer = stampConfirmService.findCustomerByPhone(phone);
 
-            redirectAttributes.addAttribute("phone", phone);
+            // 항상 표시할 값
+            Integer iceQty  = useCouponDTO.getOrderIceQty();
+            Integer hotQty  = useCouponDTO.getOrderHotQty();
+            Integer totalPrice = useCouponDTO.getOrderTotalPrice();
 
-            redirectAttributes.addAttribute("discountPrice", 0);
-            redirectAttributes.addAttribute("customer", customer);
-            redirectAttributes.addAttribute("stampCnt", customer.getStampCnt());
-            redirectAttributes.addAttribute("couponCnt", customer.getCouponCnt());
-            redirectAttributes.addAttribute("useCouponCnt", null);
-            redirectAttributes.addAttribute("iceQty", useCouponDTO.getOrderIceQty());
-            redirectAttributes.addAttribute("hotQty", useCouponDTO.getOrderHotQty());
-            redirectAttributes.addAttribute("totalPrice", useCouponDTO.getOrderTotalPrice());
+            model.addAttribute("phone", phone);
+            model.addAttribute("iceQty", iceQty);
+            model.addAttribute("hotQty", hotQty);
+            model.addAttribute("totalPrice", totalPrice);
 
-        }catch (Exception e) {
+            // 쿠폰/스탬프 관련
+            if (customer == null) {
+                model.addAttribute("customer", null);
+                model.addAttribute("stampCnt", 0);
+                model.addAttribute("couponCnt", 0);
+            } else {
+                model.addAttribute("customer", customer);
+                model.addAttribute("stampCnt", customer.getStampCnt());
+                model.addAttribute("couponCnt", customer.getCouponCnt());
+            }
+
+            int useCouponCnt = 0;
+            int discountPrice = 0;
+
+            model.addAttribute("useCouponCnt", useCouponCnt);
+            model.addAttribute("discountPrice", discountPrice);
+            System.out.println(model.toString());
+            return "useCouponPayment";
+        } catch (Exception e) {
             e.printStackTrace();
+            model.addAttribute("error", "결제 화면 준비 중 오류가 발생했습니다.");
+            return "useCouponPayment";
         }
-        return "useCouponPayment";
-
     }
 
 }
