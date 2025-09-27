@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 키오스크</title>
+    <style>
+        body {
+            font-family: 'Pretendard','Noto Sans KR',sans-serif;
+            background: #f4f4f4;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 { margin-bottom: 20px; }
+        .menu-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        .menu-item {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .menu-item h3 { margin: 0 0 8px; }
+        .menu-item p { margin: 0; color: #555; }
+        .quantity-control {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-control button {
+            width: 32px; height: 32px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #f9f9f9;
+            cursor: pointer;
+        }
+        .total {
+            font-size: 22px;
+            margin: 20px 0;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .actions button, .actions a {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-pay { background: #ff6b6b; color: #fff; }
+        .btn-coupon { background: #4a90e2; color: #fff; }
+        .btn-back { background: #999; color: #fff; text-decoration: none; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<h1>주문하기</h1>
+
+<div class="menu-list" id="menuList">
+    <!-- 메뉴가 JS에서 동적으로 채워집니다 -->
+</div>
+
+<div class="total">
+    총 합계: ₩<span id="totalPrice">0</span>
+</div>
+
+<div class="actions">
+    <button class="btn-pay" id="btnPay" disabled>결제하기</button>
+    <button class="btn-coupon" id="btnCoupon">쿠폰사용</button>
+    <a href="/" class="btn-back">뒤로가기</a>
+</div>
+
+<script>
+    // 메뉴 데이터 (필요 시 확장 가능)
+    const menuData = [
+        { id:'ice', name:'아이스 아메리카노', price:1500 },
+        { id:'hot', name:'핫 아메리카노', price:1000 },
+        { id:'latte', name:'카페라떼', price:2500 },
+        { id:'mocha', name:'카페모카', price:3000 },
+        { id:'vanilla', name:'바닐라라떼', price:2800 },
+        { id:'tea', name:'얼그레이 티', price:2000 },
+    ];
+
+    const state = {};
+    let totalPrice = 0;
+
+    const menuList = document.getElementById('menuList');
+    const totalPriceEl = document.getElementById('totalPrice');
+    const btnPay = document.getElementById('btnPay');
+
+    // 메뉴 렌더링
+    menuData.forEach(item => {
+        state[item.id] = 0; // 초기 수량 0
+        const div = document.createElement('div');
+        div.className = 'menu-item';
+        div.innerHTML = `
+      <h3>${item.name}</h3>
+      <p>₩${item.price.toLocaleString()}</p>
+      <div class="quantity-control">
+        <button type="button" onclick="updateQty('${item.id}', -1)">-</button>
+        <span id="qty-${item.id}">0</span>
+        <button type="button" onclick="updateQty('${item.id}', 1)">+</button>
+      </div>
+    `;
+        menuList.appendChild(div);
+    });
+
+    function updateQty(id, change) {
+        state[id] = Math.max(0, state[id] + change);
+        document.getElementById(`qty-${id}`).innerText = state[id];
+        renderTotal();
+    }
+
+    function renderTotal() {
+        totalPrice = Object.keys(state).reduce((sum, key) => {
+            const item = menuData.find(m => m.id === key);
+            return sum + state[key] * item.price;
+        }, 0);
+        totalPriceEl.innerText = totalPrice.toLocaleString();
+        btnPay.disabled = totalPrice <= 0;
+    }
+
+    document.getElementById('btnPay').addEventListener('click', () => {
+        alert("결제 페이지로 이동합니다 (추후 결제 로직 연결)");
+        location.href = '/mockup/payment';  // 예시
+    });
+
+    document.getElementById('btnCoupon').addEventListener('click', () => {
+        location.href = '/mockup/coupon';
+    });
+</script>
+
+</body>
+</html>

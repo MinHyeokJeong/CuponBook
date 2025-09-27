@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>스탬프 적립</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            font-family: 'Pretendard','Noto Sans KR',sans-serif;
+            background: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 360px;
+        }
+        h1 { margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stamp-count {
+            font-size: 18px;
+            margin: 15px 0;
+            color: #333;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .actions button, .actions a {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-apply { background: #ff6b6b; color: #fff; }
+        .btn-close { background: #ccc; color: #fff; text-decoration: none; display: inline-block; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>스탬프 적립</h1>
+    <div class="form-group">
+        <input type="tel" id="phone" placeholder="전화번호 입력" maxlength="11"/>
+    </div>
+    <div class="stamp-count">
+        적립 예정 스탬프 수량: <span id="stampCount">0</span>
+    </div>
+    <div class="actions">
+        <button class="btn-apply" id="btnApply">적립하기</button>
+        <a href="/" class="btn-close">창 닫기</a>
+    </div>
+</div>
+
+<script>
+    const phoneInput = document.getElementById("phone");
+    const stampCountEl = document.getElementById("stampCount");
+    const btnApply = document.getElementById("btnApply");
+
+    let stampCount = 0;
+
+    // 전화번호 입력 → 미리보기 호출 (샘플: 주문수량 2개로 가정)
+    phoneInput.addEventListener("input", () => {
+        const phone = phoneInput.value.trim();
+        if (phone.length >= 10) {
+            // TODO: 서버 호출해서 보유스탬프/이번 적립수 계산
+            stampCount = 2; // 예시 값
+            stampCountEl.innerText = stampCount;
+        } else {
+            stampCountEl.innerText = 0;
+        }
+    });
+
+    // 적립하기 클릭
+    btnApply.addEventListener("click", () => {
+        const phone = phoneInput.value.trim();
+        if (phone.length < 10) {
+            alert("전화번호가 짧습니다. 다시 입력하세요.");
+            return;
+        }
+        alert(`${phone} 번호로 스탬프 ${stampCount}개 적립되었습니다.`);
+        window.location.href = "/mockup/stampinfo"; // 적립내역 페이지로 이동
+    });
+</script>
+</body>
+</html>

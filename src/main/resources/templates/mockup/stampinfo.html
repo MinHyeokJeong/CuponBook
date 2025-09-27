@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>스탬프 적립 예정</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            font-family: 'Pretendard','Noto Sans KR',sans-serif;
+            background: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 380px;
+        }
+        h1 { margin-bottom: 20px; }
+        .info-box {
+            text-align: left;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            background: #f9fafb;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .info-box p { margin: 4px 0; }
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .actions button, .actions a {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-apply { background: #ff6b6b; color: #fff; }
+        .btn-close { background: #ccc; color: #fff; text-decoration: none; display: inline-block; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>스탬프 적립 예정</h1>
+
+    <!-- 결제/회원 정보 표시 -->
+    <div class="info-box">
+        <p><b>회원번호:</b> <span id="memberNo" th:text="${memberNo}">01012345678</span></p>
+        <p><b>현재 보유 쿠폰 수:</b> <span id="couponCount" th:text="${couponCount}">2</span>개</p>
+        <p><b>적립 예정 스탬프 수:</b> <span id="stampToAdd" th:text="${stampToAdd}">3</span>개</p>
+    </div>
+
+    <div class="actions">
+        <button class="btn-apply" id="btnApply">적립하기</button>
+        <a href="/" class="btn-close">창 닫기</a>
+    </div>
+</div>
+
+<script>
+    const btnApply = document.getElementById("btnApply");
+
+    btnApply.addEventListener("click", async () => {
+        const memberNo = document.getElementById("memberNo").textContent;
+        const stampToAdd = document.getElementById("stampToAdd").textContent;
+
+        // TODO: 실제 API 호출 예시
+        // const res = await fetch("/api/stamps/accumulate", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({ phone: memberNo, count: parseInt(stampToAdd) })
+        // });
+        // const data = await res.json();
+
+        alert(`스탬프 ${stampToAdd}개가 적립되었습니다!`);
+        window.location.href = "/stamp/history"; // 적립내역 페이지로 이동
+    });
+</script>
+</body>
+</html>
